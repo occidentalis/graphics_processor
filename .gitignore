@@ -1,0 +1,18 @@
+# Ignore Quartus Workspace Settings
+*.qws
+
+# Ignore Quartus Internal Database
+db/
+incremental_db/
+
+# Ignore Output Files
+output_files/
+
+# Ignore Simulation Files
+simulation/
+
+# Ignore Linux Backup Files
+*.bak
+
+# Ignore .rpt files
+*.rpt
