@@ -16,3 +16,7 @@ simulation/
 
 # Ignore .rpt files
 *.rpt
+
+greybox_tmp
+
+.qsys_edit/
