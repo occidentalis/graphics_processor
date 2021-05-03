@@ -44,8 +44,8 @@ reg_32 y_reg(.clk(clk), .write_en(y_we), .reset(reset), .data_in(y_), .data_out(
 reg_32 z_reg(.clk(clk), .write_en(z_we), .reset(reset), .data_in(z_), .data_out(z_out));
 reg_32 w_reg(.clk(clk), .write_en(w_we), .reset(reset), .data_in(w_), .data_out(w_out));
 
-logic [31:0] a, b;
-logic [31:0] q_add, q_mul, q_div;
+logic [31:0] a, b; // inputs to floating point units
+logic [31:0] q_add, q_mul, q_div; // outputs of floating point units
 
 fp_addsub fpu0(.clk(clk), .areset(reset), .a(a), .b(b), .q(q_add));
 fp_mul    fpu1(.clk(clk), .areset(reset), .a(a), .b(b), .q(q_mul));
@@ -66,11 +66,7 @@ always_ff @(posedge clk) begin
 end
 
 always_comb begin
-	// x_ = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
-	// y_ = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
-	// z_ = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
-	// w_ = x * m[0][3] + y * m[1][3] + z * m[2][3] + m[3][3];
-	
+
 	next_state = state;
 
 	unique case (state)

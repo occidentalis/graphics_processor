@@ -1,0 +1,5 @@
+fp add/sub is 7 cycles
+fp mul is 5 cycles
+fp div is 13 cycles
+
+fp to int is 2 cycles
