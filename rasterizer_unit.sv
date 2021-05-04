@@ -11,7 +11,7 @@ module rasterizer_unit (
 
 enum {
 	START,
-	TO_INT10, TO_INT11, TO_INT20, TO_INT21, TO_INT30, TO_INT31,
+	TO_INT10, TO_INT11, TO_INT20, TO_INT21, TO_INT30, TO_INT31, TO_INT_WAIT,
 	GET_BOUNDS,
 	RASTER,
 	DONE
@@ -110,7 +110,7 @@ always_comb begin
 
 		TO_INT21 : begin
 			p1y_we = 1'b1;
-			a = p2[1]'
+			a = p2[1];
 		end
 
 		TO_INT30 : begin
