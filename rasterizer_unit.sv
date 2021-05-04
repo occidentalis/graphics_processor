@@ -1,5 +1,5 @@
 module rasterizer_unit (
-	input logic clk, reset, start,
+	input logic clk, areset, start,
 	input logic [31:0] p1[3], p2[3], p3[3], // in raster coordinates
 	input logic [31:0] near_clip_z, far_clip_z,
 	output logic done,
@@ -13,29 +13,64 @@ enum {
 	START,
 	TO_INT10, TO_INT11, TO_INT20, TO_INT21, TO_INT30, TO_INT31, TO_INT_WAIT,
 	GET_BOUNDS,
+	FIRST_CHECK,
 	RASTER,
 	DONE
 } state, next_state;
 
-logic [31:0] a; // floating point
-logic [31:0] q; // unsigned integer
-fp_to_int fpu0(.clk(clk), .areset(reset), .a(a), .q(q));
+logic reset;
+
+logic [31:0] a0; // floating point
+logic [31:0] q0; // unsigned integer
+fp_to_int fpu0(.clk(clk), .areset(reset), .a(a0), .q(q0));
+
+logic [31:0] a1, b1, q1, s1;
+fp_addsub fpu1(.clk(clk), .areset(reset), .a(a1), .b(b1), .q(q1), .s(s1));
+
+logic [31:0] a2, b2, q2;
+fp_mul fpu2(.clk(clk), .areset(reset), .a(a2), .b(b2), .q(q2));
 
 logic p1x_we, p1y_we, p2x_we, p2y_we, p3x_we, p3y_we;
 logic [31:0] p1x, p1y, p2x, p2y, p3x, p3y;
-reg_32 p1x_reg(.clk(clk), .write_en(p1x_we), .reset(reset), .data_in(q), .data_out(p1x));
-reg_32 p1y_reg(.clk(clk), .write_en(p1y_we), .reset(reset), .data_in(q), .data_out(p1y));
-reg_32 p2x_reg(.clk(clk), .write_en(p2x_we), .reset(reset), .data_in(q), .data_out(p2x));
-reg_32 p2y_reg(.clk(clk), .write_en(p2y_we), .reset(reset), .data_in(q), .data_out(p2y));
-reg_32 p3x_reg(.clk(clk), .write_en(p3x_we), .reset(reset), .data_in(q), .data_out(p3x));
-reg_32 p4y_reg(.clk(clk), .write_en(p4y_we), .reset(reset), .data_in(q), .data_out(p3y));
+reg_32 p1x_reg(.clk(clk), .write_en(p1x_we), .reset(reset), .data_in(q0), .data_out(p1x));
+reg_32 p1y_reg(.clk(clk), .write_en(p1y_we), .reset(reset), .data_in(q0), .data_out(p1y));
+reg_32 p2x_reg(.clk(clk), .write_en(p2x_we), .reset(reset), .data_in(q0), .data_out(p2x));
+reg_32 p2y_reg(.clk(clk), .write_en(p2y_we), .reset(reset), .data_in(q0), .data_out(p2y));
+reg_32 p3x_reg(.clk(clk), .write_en(p3x_we), .reset(reset), .data_in(q0), .data_out(p3x));
+reg_32 p4y_reg(.clk(clk), .write_en(p4y_we), .reset(reset), .data_in(q0), .data_out(p3y));
 
 logic rx_we, ty_we, lx_we, by_we;
 logic [31:0] rx_in, ty_in, lx_in, by_in, rx, ty, lx, by;
-reg_32 rx_reg(.clk(clk), .write_en(rx_we), .reset(reset), .data_in(rx_in), .data_out(rx));
-reg_32 ty_reg(.clk(clk), .write_en(ty_we), .reset(reset), .data_in(ty_in), .data_out(ty));
-reg_32 lx_reg(.clk(clk), .write_en(lx_we), .reset(reset), .data_in(lx_in), .data_out(lx));
-reg_32 by_reg(.clk(clk), .write_en(by_we), .reset(reset), .data_in(by_in), .data_out(by));
+reg_32 rx_reg(.clk(clk), .write_en(rx_we), .reset(reset), .data_in(rx_in), .data_out(rx)); // right boundary
+reg_32 ty_reg(.clk(clk), .write_en(ty_we), .reset(reset), .data_in(ty_in), .data_out(ty)); // top boundary
+reg_32 lx_reg(.clk(clk), .write_en(lx_we), .reset(reset), .data_in(lx_in), .data_out(lx)); // left boundary
+reg_32 by_reg(.clk(clk), .write_en(by_we), .reset(reset), .data_in(by_in), .data_out(by)); // bottom boundary
+
+logic curr_x_we, curr_y_we, x_inc_we;
+logic [31:0] curr_x_in, curr_y_in, x_inc_in, curr_x, curr_y, x_inc;
+reg_32 curr_x_reg(.clk(clk), .write_en(curr_x_we), .reset(reset), .data_in(curr_x_in), .data_out(curr_x));
+reg_32 curr_y_reg(.clk(clk), .write_en(curr_y_we), .reset(reset), .data_in(curr_y_in), .data_out(curr_y));
+reg_32 x_inc_reg(.clk(clk), .write_en(x_inc_we), .reset(reset), .data_in(x_inc_in), .data_out(x_inc));
+
+logic dx1_we, dy1_we, dx2_we, dy2_we, dx3_we, dy3_we;
+logic [31:0] dx1_in, dy1_in, dx2_in, dy2_in, dx3_in, dy3_in;
+logic [31:0] dx1, dy1, dx2, dy2, dx3, dy3;
+reg_32 dx1_reg(.clk(clk), .write_en(dx1_we), .reset(reset), .data_in(dx1_in), .data_out(dx1)); // dXi = Xi - X[i-1]
+reg_32 dy1_reg(.clk(clk), .write_en(dy1_we), .reset(reset), .data_in(dy1_in), .data_out(dy1));
+reg_32 dx2_reg(.clk(clk), .write_en(dx2_we), .reset(reset), .data_in(dx2_in), .data_out(dx2));
+reg_32 dy2_reg(.clk(clk), .write_en(dy2_we), .reset(reset), .data_in(dy2_in), .data_out(dy2));
+reg_32 dx3_reg(.clk(clk), .write_en(dx3_we), .reset(reset), .data_in(dx3_in), .data_out(dx3));
+reg_32 dy3_reg(.clk(clk), .write_en(dy3_we), .reset(reset), .data_in(dy3_in), .data_out(dy3));
+
+logic e1_we, e2_we, e3_we;
+logic [31:0] e1_in, e2_in, e3_in, e1, e2, e3;
+reg_32 e1_reg(.clk(clk), .write_en(e1_we), .reset(reset), .data_in(e1_in), .data_out(e1)); // Ei(x, y) = (x - Xi)dYi - (y - Yi)dXi
+reg_32 e2_reg(.clk(clk), .write_en(e2_we), .reset(reset), .data_in(e2_in), .data_out(e2)); // Ei(x+1, y) = Ei(x, y) + dYi
+reg_32 e3_reg(.clk(clk), .write_en(e3_we), .reset(reset), .data_in(e3_in), .data_out(e3));
+
+logic temp_we;
+logic [31:0] temp_in, temp;
+reg_32 temp_reg(.clk(clk), .write_en(temp_we), .reset(reset), .data_in(temp_in), .data_out(temp));
 
 initial begin
 	state = DONE;
@@ -48,7 +83,10 @@ always_ff @(posedge clk) begin
 	else
 		cycle_count <= 1;
 
-	state <= next_state;
+	if (areset == 1)
+		state <= DONE;
+	else
+		state <= next_state;
 end
 
 always_comb begin
@@ -58,7 +96,7 @@ always_comb begin
 	unique case (state)
 
 		START : begin
-			
+			next_state = TO_INT10;
 		end
 
 		TO_INT10 : begin
@@ -82,45 +120,65 @@ always_comb begin
 		end
 
 		TO_INT31 : begin
+				next_state = TO_INT_WAIT;
+		end
+
+		TO_INT_WAIT : begin
+			if (cycle_count == 2)
 				next_state = GET_BOUNDS;
 		end
 
+		GET_BOUNDS : begin
+			next_state = FIRST_CHECK;
+		end
+
+		FIRST_CHECK : begin
+			if (cycle_count == 34)
+				next_state = RASTER;
+		end
+
+		RASTER : begin
+			if (done == 1)
+				next_state = DONE;
+		end
+
 		DONE : begin
-			
+			if (start == 1)
+				next_state = START;
 		end
 	endcase
 
 	unique case (state)
 		START : begin
-			
+			reset = 1'b1;
 		end
 
 		TO_INT10 : begin
-			a = p1[0];
+			a0 = p1[0];
 		end
 
 		TO_INT11 : begin
-			a = p1[1];
+			a0 = p1[1];
 		end
 
 		TO_INT20 : begin
 			p1x_we = 1'b1;
-			a = p2[0];
+			a0 = p2[0];
 		end
 
 		TO_INT21 : begin
 			p1y_we = 1'b1;
-			a = p2[1];
+			a0 = p2[1];
 		end
 
 		TO_INT30 : begin
 			p2x_we = 1'b1;
-			a = p3[0];
+			a0 = p3[0];
 		end
 
 		TO_INT31 : begin
 			p2y_we = 1'b1;
-			a = p3[1];
+			a0 = p3[1];
 		end
 
 		TO_INT_WAIT : begin
@@ -161,12 +219,201 @@ always_comb begin
 				else ty_in = p2y;					// p2 top of p3
 			end
 
+			curr_x_we = 1'b1;
+			curr_y_we = 1'b1;
+			curr_x_in = lx;
+			curr_y_in = ty;
+
 		end
 
 		RASTER : begin
-			
+			fb_x = curr_x;
+			fb_y = curr_y;
+			if (e1 + (curr_x - lx) * dy1 - (curr_y - ty) * dx1 >= 0 &&
+				e2 + (curr_x - lx) * dy2 - (curr_y - ty) * dx2 >= 0 &&
+				e3 + (curr_x - lx) * dy3 - (curr_y - ty) * dx3 >= 0) begin
+				fb_we = 1'b1;
+				data = 4'b1111;
+			end
+
+			if (curr_x + x_inc < lx || rx < curr_x + x_inc) begin
+				if (curr_y + 1 > by) done = 1'b1;
+				curr_y_we = 1'b1;
+				curr_y_in = curr_y + 1;
+				x_inc_we = 1'b1;
+				x_inc_in = ~x_inc;
+			end else begin
+				curr_x_we = 1'b1;
+				curr_x_in = curr_x + x_inc;
+			end
 		end
 
+		FIRST_CHECK : begin
+			case (cycle_count)
+			// dX and dY for edge 1
+				1 : begin
+					a1 = p1[0]; // dX1 = X1 - X3
+					b1 = p3[0];
+				end
+				2 : begin
+					a1 = p1[1]; // dY1 = Y1 - X3
+					b1 = p3[1];
+				end
+			// dX and dY for edge 2
+				3 : begin
+					a1 = p2[0]; // dX2 = X2 - X1
+					b1 = p1[0];
+				end
+				4 : begin
+					a1 = p2[1]; // dY2 = Y2 - Y1
+					b1 = p1[1];
+				end
+			// dX and dY for edge 3
+				5 : begin
+					a1 = p3[0]; // dX3 = X3 - X2
+					b1 = p2[0];
+				end
+				6 : begin
+					a1 = p3[1]; // dY3 = Y3 - Y2
+					b1 = p2[1];
+				end
+			// save dX's and dY's, do subtractions for Ei
+				8 : begin
+					dx1_we = 1'b1;
+					dx1_in = s1;
+
+					a1 = curr_x; // begin E1 calcs
+					b1 = p1[0];
+				end
+				9 : begin
+					dy1_we = 1'b1;
+					dy1_in = s1;
+
+					a1 = curr_y;
+					b1 = p1[1];
+				end
+				10 : begin
+					dx2_we = 1'b1;
+					dx2_in = s1;
+
+					a1 = curr_x;
+					b1 = p2[0];
+				end
+				11 : begin
+					dy2_we = 1'b1;
+					dy2_in = s1;
+
+					a1 = curr_y;
+					b1 = p2[1];
+				end
+				12 : begin
+					dx3_we = 1'b1;
+					dx3_in = s1;
+
+					a1 = curr_x;
+					b1 = p3[0];
+				end
+				13 : begin
+					dy3_we = 1'b1;
+					dy3_in = s1;
+
+					a1 = curr_y;
+					b1 = p3[1];
+				end
+			// Ei Multiplies
+				15 : begin
+					a2 = s1; // (x - x1) * dy1
+					b2 = dy1;
+					
+					a0 = dy1;
+				end
+				16 : begin
+					a2 = s1; // (y - y1) * dx1
+					b2 = dx1;
+
+					a0 = dx1;
+				end
+				17 : begin
+					a2 = s1; // (x - x2) * dy2
+					b2 = dy2;
+
+					a0 = dy2;
+					dy1_we = 1'b1;
+					dy1_in = q0;
+				end
+				18 : begin
+					a2 = s1; // (y - y2) * dx2
+					b2 = dx2;
+
+					a0 = dx2;
+					dx1_we = 1'b1;
+					dx1_in = q0;
+				end
+				19 : begin
+					a2 = s1; // (x - x3) * dy3
+					b2 = dy3;
+
+					a0 = dy3;
+					dy2_we = 1'b1;
+					dy2_in = q0;
+				end
+				20 : begin
+					a2 = s1; // (y - y3) * dx3
+					b2 = dx3;
+
+					a0 = dx3;
+					dx2_we = 1'b1;
+					dx2_in = q0;
+
+					temp_we = 1'b1; // result of (x - x1) * dy1
+					temp_in = q2;
+				end
+			// Final Ei subtracts
+				21 : begin
+					a1 = temp; // E1(x, y) = (x - x1) * dy1 - (y - y1) * dx1
+					b1 = q2;
+
+					dy3_we = 1'b1;
+					dy3_in = q0;
+				end
+				22 : begin
+					temp_we = 1'b1; // result of (x - x2) * dy2
+					temp_in = q2;
+
+					dx3_we = 1'b1;
+					dx3_in = q0;
+				end
+				23 : begin
+					a1 = temp; // E2(x, y) = (x - x2) * dy2 - (y - y2) * dx2
+					b1 = q2;
+				end
+				24 : begin
+					temp_we = 1'b1; // result of (x - x3) * dy3
+					temp_in = q2;
+				end
+				25 : begin
+					a1 = temp; // E3(x, y) = (x - x3) * dy3 - (y - y3) * dx3
+					b1 = q2;
+				end
+				28 : begin
+					a0 = s1;
+				end
+				30 : begin
+					a0 = s1;
+					e1_we = 1'b1;
+					e1_in = q0;	
+				end
+				32 : begin
+					a0 = s1;
+					e2_we = 1'b1;
+					e2_in = q0;
+				end
+				34 : begin
+					e3_we = 1'b1;
+					e3_in = q0;
+				end
+			endcase
+		end
 
 		DONE : begin
 			
