@@ -22,16 +22,18 @@
 //-------------------------------------------------------------------------
 
 
-module  vga_controller ( input        Clk,       // 50 MHz clock
-                                      Reset,     // reset signal
-                         output logic hs,        // Horizontal sync pulse.  Active low
-								              vs,        // Vertical sync pulse.  Active low
-												  pixel_clk, // 25 MHz pixel clock output
-												  blank,     // Blanking interval indicator.  Active low.
-												  sync,      // Composite Sync signal.  Active low.  We don't use it in this lab,
-												             //   but the video DAC on the DE2 board requires an input for it.
-								 output [9:0] DrawX,     // horizontal coordinate
-								              DrawY );   // vertical coordinate
+module  vga_controller (input           Clk,       // 50 MHz clock
+                                        Reset,     // reset signal
+                        output logic    hs,        // Horizontal sync pulse.  Active low
+								        vs,        // Vertical sync pulse.  Active low
+									    pixel_clk, // 25 MHz pixel clock output
+									    blank,     // Blanking interval indicator.  Active low.
+									    sync,      // Composite Sync signal.  Active low.  We don't use it in this lab,
+									    			//   but the video DAC on the DE2 board requires an input for it.
+						output [9:0]    DrawX,     // horizontal coordinate
+								        DrawY,     // vertical coordinate
+                        output [14:0]   pixel_addr
+                                 );   
     
     // 800 horizontal pixels indexed 0 to 799
     // 525 vertical pixels indexed 0 to 524
@@ -68,7 +70,7 @@ module  vga_controller ( input        Clk,       // 50 MHz clock
    always_ff @ (posedge clkdiv or posedge Reset )
 	begin: counter_proc
 		  if ( Reset ) 
-			begin 
+			begin
 				 hc <= 10'b0000000000;
 				 vc <= 10'b0000000000;
                  // Pixel address register reset
@@ -80,10 +82,9 @@ module  vga_controller ( input        Clk,       // 50 MHz clock
 			end
 				
 		  else 
-			 if ( hc == hpixels )  //If hc has reached the end of pixel count
-			  begin 
+			 if ( hc == hpixels ) begin //If hc has reached the end of pixel count
 					hc <= 10'b0000000000;
-					if ( vc == vlines )   //if vc has reached end of line count
+					if ( vc == vlines ) begin  //if vc has reached end of line count
 						 vc <= 10'b0000000000;
                          // Reset base pixel address at end of frame
                          base_pixel_addr <= 15'b000000000000000;
@@ -91,40 +92,42 @@ module  vga_controller ( input        Clk,       // 50 MHz clock
                          pixel_doubled <= 0;
                          // Double line register reset
                          line_doubled <= 0;
-					else 
-						 vc <= (vc + 1);
-                         // Check if line should be repeated and do so
-                         if (line_doubled) begin
+                    end else begin
+						vc <= (vc + 1);
+                        // Check if line should be repeated and do so
+                        if (line_doubled) begin
                             // Reset the line doubled register
                             line_doubled <= 0;
-                            // Increment the pixel address to the next line
-                            base_pixel_addr <= base_pixel_addr + 1;
-                         end
-                         else begin
+                        end
+                        else begin
                             // Otherwise set the line doubled register
                             line_doubled <= 1;
                             // Reset the base pixel address to repeat the previous line
-                            base_pixel_addr <= base_pixel_addr - 319;
-                         end
-			  end
-			 else 
-				  hc <= (hc + 1);  //no statement about vc, implied vc <= vc;
-                  // Check if pixel address should be updated
-                  if (hc < 640)
-                    // Check if pixel should be repeated and do so
-                    if (pixel_doubled) begin
-                        // Reset the pixel doubled register
-                        pixel_doubled <= 0;
-                        // Increment the pixel address
-                        base_pixel_addr <= base_pixel_addr + 1;
+                            base_pixel_addr <= base_pixel_addr - 15'd320;
+                        end
+                    end
+			    end
+			    else begin
+                    hc <= (hc + 1);  //no statement about vc, implied vc <= vc; 
+                    // Check if pixel address should be updated
+                    if (hc < 10'd640) begin
+                        // Check if pixel should be repeated and do so
+                        if (pixel_doubled) begin
+                            // Reset the pixel doubled register
+                            pixel_doubled <= 0;
+                            // Increment the pixel address
+                            base_pixel_addr <= base_pixel_addr + 15'd1;
                     end else begin
                         // Set the pixel doubled register
                         pixel_doubled <= 1;
                     end
-	 end 
+                end
+            end
+	end 
    
     assign DrawX = hc;
     assign DrawY = vc;
+    assign pixel_addr = base_pixel_addr;
    
 	 //horizontal sync pulse is 96 pixels long at pixels 656-752
     //(signal is registered to ensure clean output waveform)
