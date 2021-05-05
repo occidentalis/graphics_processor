@@ -81,7 +81,7 @@ module  vga_controller (input           Clk,       // 50 MHz clock
                  line_doubled <= 0;
 			end
 				
-		  else 
+		  else begin
 			 if ( hc == hpixels ) begin //If hc has reached the end of pixel count
 					hc <= 10'b0000000000;
 					if ( vc == vlines ) begin  //if vc has reached end of line count
@@ -98,12 +98,11 @@ module  vga_controller (input           Clk,       // 50 MHz clock
                         if (line_doubled) begin
                             // Reset the line doubled register
                             line_doubled <= 0;
-                        end
-                        else begin
+                        end else begin
                             // Otherwise set the line doubled register
                             line_doubled <= 1;
                             // Reset the base pixel address to repeat the previous line
-                            base_pixel_addr <= base_pixel_addr - 15'd320;
+                            base_pixel_addr <= base_pixel_addr - 15'b000000101000000;
                         end
                     end
 			    end
@@ -116,14 +115,15 @@ module  vga_controller (input           Clk,       // 50 MHz clock
                             // Reset the pixel doubled register
                             pixel_doubled <= 0;
                             // Increment the pixel address
-                            base_pixel_addr <= base_pixel_addr + 15'd1;
-                    end else begin
+                            base_pixel_addr <= base_pixel_addr + 15'b000000000000001;
+                        end else begin
                         // Set the pixel doubled register
                         pixel_doubled <= 1;
+                        end
                     end
                 end
-            end
-	end 
+	        end
+        end
    
     assign DrawX = hc;
     assign DrawY = vc;
