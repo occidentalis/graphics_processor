@@ -15,8 +15,8 @@ module frame_buffer (
     // Memory initialization
     int i;
     initial begin
-        for (i = 0; i < 4990; i = i + 1) begin
-            pixels[1] = 4'b1111;
+        for (i = 0; i < 310; i = i + 1) begin
+            pixels[i] = 4'b1111;
         end
     end
 

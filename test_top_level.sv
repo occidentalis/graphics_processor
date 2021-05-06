@@ -5,40 +5,13 @@ module test_top_level (
     output logic        VGA_VS,
     output logic [3:0]  VGA_R,
     output logic [3:0]  VGA_G,
-    output logic [3:0]  VGA_B,
-    output logic [16:0] pixel_addr,
-    output logic [9:0]  pixel_x, pixel_y 
+    output logic [3:0]  VGA_B
 );
-    logic blank;
-    logic Reset;
+    logic reset;
+    logic gpu_clk_internal;
 
-    logic [3:0] test_data;
+    gpu_pll gpu_clk_gen (.areset(1'b0), .inclk0(MAX10_CLK1_50), .c0(gpu_clk_internal));
+    frame_buffer_top buff (.reset(reset), .gpu_x(9'b000000000), .gpu_y(9'b000000000), .gpu_data(4'b0000), .gpu_we(1'b0), .gpu_clk_150(gpu_clk_internal), .vga_clk_50(MAX10_CLK1_50), .vga_r(VGA_R), .vga_g(VGA_G), .vga_b(VGA_B), .vga_hs(VGA_HS), .vga_vs(VGA_VS));
 
-    logic [3:0]  vga_data;
-    logic [16:0] vga_addr;
-
-    logic sync, pixel_clk;
-    
-    vga_controller display_adapter (.Clk(MAX10_CLK1_50), .Reset(Reset), .hs(VGA_HS), .vs(VGA_VS), .blank(blank), .DrawX(pixel_x), .DrawY(pixel_y), .sync(sync), .pixel_clk(pixel_clk));
-    address_translator translate (.pixel_x(pixel_x), .pixel_y(pixel_y), .address(vga_addr));
-
-    always_comb begin : vga_blank_mux
-        if (blank) begin
-            vga_data = test_data;
-        end else begin
-            vga_data = 4'b0000;
-		  end
-        if (vga_addr < 17'b00000000101000000)
-            test_data = 4'b1111;
-        else
-            test_data = 4'b1010;
-    end
-
-    assign VGA_R = vga_data;
-    assign VGA_G = vga_data;
-    assign VGA_B = vga_data;
-	assign pixel_addr = vga_addr;
-    assign Reset = !Keys[0];
-    
-
+    assign reset = !Keys[0];
 endmodule

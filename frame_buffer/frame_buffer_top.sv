@@ -2,7 +2,7 @@ module frame_buffer_top (
     input reset,
     input logic [9:0] gpu_x, gpu_y,
     input logic [3:0] gpu_data,
-    input gpu_we, gpu_clk_150, vga_clk_50;
+    input gpu_we, gpu_clk_150, vga_clk_50,
     output [3:0] vga_r, vga_g, vga_b,
     output vga_hs, vga_vs
 );
