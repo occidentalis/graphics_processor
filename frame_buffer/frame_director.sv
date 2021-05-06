@@ -1,5 +1,5 @@
 module frame_director (
-    input reset, clk,
+    input reset,
     input logic [9:0] gpu_x, gpu_y,
     input logic [3:0] gpu_data,
     input gpu_we, gpu_done, gpu_clk_150, vga_clk_50,
