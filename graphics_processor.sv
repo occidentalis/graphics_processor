@@ -11,13 +11,15 @@ module graphics_processor(
 		RENDER, NOT_RENDER
 	} state, next_state;
 
-	logic gpu_clk_150, vga_clk_50;
+	logic gpu_clk_150;
 	logic reset, raster_start;
 	logic [31:0] p1[3], p2[3], p3[3];
 	logic raster_done;
 	logic [9:0] fb_x, fb_y;
 	logic [3:0] fb_data;
 	logic fb_we;
+
+	gpu_pll gpu_clk_gen (.areset(1'b0), .inclk0(MAX10_CLK1_50), .c0(gpu_clk_150));
 
 	rasterizer_unit ru (
 		.clk(gpu_clk_150),
@@ -37,7 +39,7 @@ module graphics_processor(
 		.gpu_data(fb_data),
 		.gpu_we(fb_we),
 		.gpu_clk_150(gpu_clk_150),
-		.vga_clk_50(vga_clk_50),
+		.vga_clk_50(MAX10_CLK1_50),
 		.vga_r(VGA_R),
 		.vga_g(VGA_G),
 		.vga_b(VGA_B),
