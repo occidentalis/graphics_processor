@@ -6,7 +6,7 @@ module reg_32 (
 
 logic [31:0] register;
 
-always_ff @(posedge clk or posedge reset) begin
+always_ff @(posedge clk) begin
     
     if (reset)
         register = 32'b0;

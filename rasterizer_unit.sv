@@ -37,7 +37,7 @@ reg_32 p1y_reg(.clk(clk), .write_en(p1y_we), .reset(reset), .data_in(q0), .data_
 reg_32 p2x_reg(.clk(clk), .write_en(p2x_we), .reset(reset), .data_in(q0), .data_out(p2x));
 reg_32 p2y_reg(.clk(clk), .write_en(p2y_we), .reset(reset), .data_in(q0), .data_out(p2y));
 reg_32 p3x_reg(.clk(clk), .write_en(p3x_we), .reset(reset), .data_in(q0), .data_out(p3x));
-reg_32 p4y_reg(.clk(clk), .write_en(p4y_we), .reset(reset), .data_in(q0), .data_out(p3y));
+reg_32 p3y_reg(.clk(clk), .write_en(p3y_we), .reset(reset), .data_in(q0), .data_out(p3y));
 
 logic rx_we, ty_we, lx_we, by_we;
 logic [31:0] rx_in, ty_in, lx_in, by_in, rx, ty, lx, by;
@@ -77,7 +77,7 @@ initial begin
 end
 
 int cycle_count = 1;
-always_ff @(posedge clk or posedge areset) begin
+always_ff @(posedge clk) begin
 	if (state == next_state)
 		cycle_count <= cycle_count + 1;
 	else
@@ -91,6 +91,7 @@ end
 
 always_comb begin
 
+	reset = 1'b0;
 	done = 1'b0;
 	fb_x = 10'b0;
 	fb_y = 10'b0;
@@ -248,16 +249,16 @@ always_comb begin
 			lx_we = 1'b1;
 			by_we = 1'b1;
 
-			if (p1x <= p2x) begin 				// p1 top of p2
-				if (p1x <= p3x) lx_in = p1x; 		// p1 top of p3
-				else lx_in = p3x; 					// p3 top of p1
+			if (p1x <= p2x) begin 				// p1 left of p2
+				if (p1x <= p3x) lx_in = p1x; 		// p1 left of p3
+				else lx_in = p3x; 					// p3 left of p1
 				if (p2x <= p3x) rx_in = p3x; 		// p3 right of p2
 				else rx_in = p2x; 					// p2 right of p3
 			end else begin 						// p1 right of p2
 				if (p3x <= p1x) rx_in = p1x; 		// p1 right of p3
 				else rx_in = p3x; 					// p3 right of p1
-				if (p3x <= p2x) lx_in = p3x;		// p3 top of p2
-				else lx_in = p2x;					// p2 top of p3
+				if (p3x <= p2x) lx_in = p3x;		// p3 left of p2
+				else lx_in = p2x;					// p2 left of p3
 			end
 			
 			if (p1y <= p2y) begin 				// p1 top of p2
@@ -280,8 +281,8 @@ always_comb begin
 		end
 
 		RASTER : begin
-			fb_x = curr_x;
-			fb_y = curr_y;
+			fb_x = curr_x[9:0];
+			fb_y = curr_y[9:0];
 			if (e1 + (curr_x - lx) * dy1 - (curr_y - ty) * dx1 >= 0 &&
 				e2 + (curr_x - lx) * dy2 - (curr_y - ty) * dx2 >= 0 &&
 				e3 + (curr_x - lx) * dy3 - (curr_y - ty) * dx3 >= 0) begin
