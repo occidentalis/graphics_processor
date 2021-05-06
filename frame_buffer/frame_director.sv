@@ -21,7 +21,7 @@ logic buffer_we_0_internal, buffer_we_1_internal;
 // Internal storage of currently writing buffer
 logic write_buffer_num_internal;
 // Internal register for gpu_start
-logic gpu_start_internal;
+logic buffer_swap_internal, prev_vs_internal;
 
 // Instantiate VGA controller, two frame buffers, and two address translators
 vga_controller vga (.Clk(vga_clk_50), .Reset(reset), .hs(vga_hs), .vs(vga_vs), .blank(vga_enable_internal), .DrawX(vga_x_internal), .DrawY(vga_y_internal));
@@ -53,18 +53,17 @@ always_comb begin : output_muxes
 end
 
 // Update the currently used frame based vga controller and gpu
-always_ff @( posedge vga_vs ) begin : frame_swap
-    // Check if graphics card is done rendering and swap buffers
-    if (gpu_done) begin
-        write_buffer_num_internal <= !(write_buffer_num_internal);
-        gpu_start_internal <= 1'b1;
-    end
-end
+always_ff @( posedge gpu_clk_150 ) begin : frame_swap
+    // Update previous vs state
+    prev_vs_internal <= vga_vs;
 
-// Update the internal gpu_start flag
-always_ff @( posedge gpu_clk_150 ) begin : gpu_start_controller
-    if ((gpu_start_internal == 1'b1) && (gpu_done == 1'b0))
-        gpu_start_internal <= 1'b0;
+    // Check if graphics card is done rendering and vs is active
+    if ((gpu_done) && (prev_vs_internal != vga_vs) && (!vga_vs)) begin
+        write_buffer_num_internal <= !write_buffer_num_internal;
+        buffer_swap_internal <= 1'b1;     
+    end else if ((buffer_swap_internal) && (!gpu_done)) begin 
+        buffer_swap_internal <= 1'b0;
+    end
 end
 
 // Connect the internal display outputs to the VGA DAC
@@ -73,6 +72,6 @@ assign vga_g = display_out_internal;
 assign vga_b = display_out_internal;
 
 // Connect the internal gpu_start flag to the external port
-assign gpu_start = gpu_start_internal;
+assign gpu_start = buffer_swap_internal;
 
 endmodule
