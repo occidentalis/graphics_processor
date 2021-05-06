@@ -4,7 +4,7 @@ module rasterizer_unit (
 	input logic [31:0] near_clip_z, far_clip_z,
 	output logic done,
 	output logic [9:0] fb_x,
-	output logic [8:0] fb_y,
+	output logic [9:0] fb_y,
 	output logic [3:0] data,
 	output logic fb_we
 );
@@ -77,7 +77,7 @@ initial begin
 end
 
 int cycle_count = 1;
-always_ff @(posedge clk) begin
+always_ff @(posedge clk or posedge areset) begin
 	if (state == next_state)
 		cycle_count <= cycle_count + 1;
 	else
@@ -147,6 +147,8 @@ always_comb begin
 				next_state = START;
 		end
 	endcase
+
+
 
 	unique case (state)
 		START : begin
