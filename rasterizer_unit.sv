@@ -90,6 +90,57 @@ always_ff @(posedge clk or posedge areset) begin
 end
 
 always_comb begin
+
+	done = 1'b0;
+	fb_x = 10'b0;
+	fb_y = 10'b0;
+	data = 4'b0;
+	fb_we = 1'b0;
+	a0 = 32'b0;
+	a1 = 32'b0;
+	b1 = 32'b0;
+	a2 = 32'b0;
+	b2 = 32'b0;
+	p1x_we = 1'b0;
+	p1y_we = 1'b0;
+	p2x_we = 1'b0;
+	p2y_we = 1'b0;
+	p3x_we = 1'b0;
+	p3y_we = 1'b0;
+	rx_we = 1'b0;
+	ty_we = 1'b0;
+	lx_we = 1'b0;
+	by_we = 1'b0;
+	rx_in = 32'b0;
+	ty_in = 32'b0;
+	lx_in = 32'b0;
+	by_in = 32'b0;
+	curr_x_we = 1'b0;
+	curr_y_we = 1'b0;
+	x_inc_we = 1'b0;
+	curr_x_in = 32'b0;
+	curr_y_in = 32'b0;
+	x_inc_in = 32'b0;
+	dx1_we = 1'b0;
+	dy1_we = 1'b0;
+	dx2_we = 1'b0;
+	dy2_we = 1'b0;
+	dx3_we = 1'b0;
+	dy3_we = 1'b0;
+	dx1_in = 32'b0;
+	dy1_in = 32'b0;
+	dx2_in = 32'b0;
+	dy2_in = 32'b0;
+	dx3_in = 32'b0;
+	dy3_in = 32'b0;
+	e1_we = 1'b0;
+	e2_we = 1'b0;
+	e3_we = 1'b0;
+	e1_in = 32'b0;
+	e2_in = 32'b0;
+	e3_in = 32'b0;
+	temp_we = 1'b0;
+	temp_in = 32'b0;
 	
 	next_state = state;
 
