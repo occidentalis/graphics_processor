@@ -69,6 +69,8 @@ set_location_assignment PIN_V1 -to VGA_R[1]
 set_location_assignment PIN_AA1 -to VGA_R[0]
 set_location_assignment PIN_N1 -to VGA_VS
 set_location_assignment PIN_P11 -to MAX10_CLK1_50
+set_global_assignment -name SYSTEMVERILOG_FILE frame_buffer/frame_buffer_top.sv
+set_global_assignment -name SYSTEMVERILOG_FILE frame_buffer/address_translator.sv
 set_global_assignment -name SDC_FILE lab6.sdc
 set_global_assignment -name SYSTEMVERILOG_FILE VGA_controller.sv
 set_global_assignment -name SYSTEMVERILOG_FILE test_top_level.sv

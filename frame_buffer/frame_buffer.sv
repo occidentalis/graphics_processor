@@ -13,12 +13,12 @@ module frame_buffer (
     logic [3:0] pixels [76800];
 
     // Memory initialization
-    int i;
-    initial begin
-        for (i = 0; i < 310; i = i + 1) begin
-            pixels[i] = 4'b1111;
-        end
-    end
+    //int i;
+    //initial begin
+    //    for (i = 0; i < 310; i = i + 1) begin
+    //        pixels[i] = 4'b1111;
+    //    end
+    //end
 
     always_ff @( posedge gpu_clk ) begin : frame_buffer_update
         // Synchronous read from frame buffer
