@@ -3,11 +3,11 @@ module frame_buffer (
     // GPU Frame Buffer Inputs
     input logic gpu_clk,
     input logic [3:0] gpu_pixel_data,
-    input logic [14:0] gpu_pixel_addr,
+    input logic [16:0] gpu_pixel_addr,
     input logic gpu_we,
     // VGA Display Adapter Inputs
     output logic [3:0] vga_pixel_data,
-    input logic [14:0] vga_pixel_addr
+    input logic [16:0] vga_pixel_addr
 );
     // Instantiate internal frame buffer
     logic [3:0] pixels [76800];

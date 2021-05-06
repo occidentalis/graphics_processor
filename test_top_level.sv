@@ -6,7 +6,7 @@ module test_top_level (
     output logic [3:0]  VGA_R,
     output logic [3:0]  VGA_G,
     output logic [3:0]  VGA_B,
-    output logic [14:0] pixel_addr,
+    output logic [16:0] pixel_addr,
     output logic [9:0]  pixel_x, pixel_y 
 );
     logic blank;
@@ -15,7 +15,7 @@ module test_top_level (
     logic [3:0] test_data;
 
     logic [3:0]  vga_data;
-    logic [14:0] vga_addr;
+    logic [16:0] vga_addr;
 
     logic sync, pixel_clk;
     
@@ -28,7 +28,7 @@ module test_top_level (
         end else begin
             vga_data = 4'b0000;
 		  end
-        if (vga_addr < 15'b000011111111111)
+        if (vga_addr < 17'b00000000101000000)
             test_data = 4'b1111;
         else
             test_data = 4'b1010;
