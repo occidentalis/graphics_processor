@@ -55,9 +55,10 @@ end
 // Update the currently used frame based vga controller and gpu
 always_ff @( posedge vga_vs ) begin : frame_swap
     // Check if graphics card is done rendering and swap buffers
-    if (gpu_done)
+    if (gpu_done) begin
         write_buffer_num_internal <= !(write_buffer_num_internal);
         gpu_start_internal <= 1'b1;
+    end
 end
 
 // Update the internal gpu_start flag
