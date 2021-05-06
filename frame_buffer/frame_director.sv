@@ -1,4 +1,4 @@
-module frame_buffer_top (
+module frame_director (
     input reset, clk,
     input logic [9:0] gpu_x, gpu_y,
     input logic [3:0] gpu_data,
