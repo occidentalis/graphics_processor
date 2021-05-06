@@ -41,13 +41,13 @@ always_comb begin : output_muxes
     case (write_buffer_num_internal)
         1'b0 : begin
                     selected_buffer_data_internal = vga_data_1_internal;
-                    buffer_we_0_internal = 1'b1;
+                    buffer_we_0_internal = gpu_we;
                     buffer_we_1_internal = 1'b0;
                end
         1'b1 : begin
                     selected_buffer_data_internal = vga_data_0_internal;
                     buffer_we_0_internal = 1'b0;
-                    buffer_we_1_internal = 1'b1;
+                    buffer_we_1_internal = gpu_we;
                end
     endcase
 end
