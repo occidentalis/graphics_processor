@@ -555,9 +555,9 @@ always_comb begin
 					e1_pixel_we = 1;
 					e1_pixel_in = e1_pixel + e1;
 					e2_pixel_we = 1;
-					e2_pixel_in = e2_pixel + e1;
+					e2_pixel_in = e2_pixel + e2;
 					e3_pixel_we = 1;
-					e3_pixel_in = e3_pixel + e1;
+					e3_pixel_in = e3_pixel + e3;
 				end
 				4 : begin
 					if (e1_pixel < 32'h80000000 &&
