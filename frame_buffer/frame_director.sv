@@ -25,8 +25,8 @@ logic buffer_swap_internal, prev_vs_internal;
 
 // Instantiate VGA controller, two frame buffers, and two address translators
 vga_controller vga (.Clk(vga_clk_50), .Reset(reset), .hs(vga_hs), .vs(vga_vs), .blank(vga_enable_internal), .DrawX(vga_x_internal), .DrawY(vga_y_internal));
-frame_buffer buffer0 (.gpu_clk(gpu_clk_150), .gpu_pixel_data(gpu_data), .gpu_pixel_addr(gpu_address_internal), .gpu_we(buffer_we_0_internal), .vga_pixel_data(vga_data_0_internal), .vga_pixel_addr(vga_address_internal));
-frame_buffer buffer1 (.gpu_clk(gpu_clk_150), .gpu_pixel_data(gpu_data), .gpu_pixel_addr(gpu_address_internal), .gpu_we(buffer_we_1_internal), .vga_pixel_data(vga_data_1_internal), .vga_pixel_addr(vga_address_internal));
+frame_buffer buffer0 (.gpu_clk(gpu_clk_150), .vga_clk(vga_clk_50), .gpu_pixel_data(gpu_data), .gpu_pixel_addr(gpu_address_internal), .gpu_we(buffer_we_0_internal), .vga_pixel_data(vga_data_0_internal), .vga_pixel_addr(vga_address_internal));
+frame_buffer buffer1 (.gpu_clk(gpu_clk_150), .vga_clk(vga_clk_50), .gpu_pixel_data(gpu_data), .gpu_pixel_addr(gpu_address_internal), .gpu_we(buffer_we_1_internal), .vga_pixel_data(vga_data_1_internal), .vga_pixel_addr(vga_address_internal));
 address_translator gpu_to_buffer (.pixel_x(gpu_x), .pixel_y(gpu_y), .address(gpu_address_internal));
 address_translator buffer_to_vga (.pixel_x(vga_x_internal), .pixel_y(vga_y_internal), .address(vga_address_internal));
 
@@ -52,20 +52,6 @@ always_comb begin : output_muxes
     endcase
 end
 
-// Update the currently used frame based vga controller and gpu
-always_ff @( posedge gpu_clk_150 ) begin : frame_swap
-    // Update previous vs state
-    prev_vs_internal <= vga_vs;
-
-    // Check if graphics card is done rendering and vs is active
-    if ((gpu_done) && (prev_vs_internal != vga_vs) && (!vga_vs)) begin
-        write_buffer_num_internal <= !write_buffer_num_internal;
-        buffer_swap_internal <= 1'b1;     
-    end else if ((buffer_swap_internal) && (!gpu_done)) begin 
-        buffer_swap_internal <= 1'b0;
-    end
-end
-
 // Connect the internal display outputs to the VGA DAC
 assign vga_r = display_out_internal;
 assign vga_g = display_out_internal;
@@ -73,5 +59,6 @@ assign vga_b = display_out_internal;
 
 // Connect the internal gpu_start flag to the external port
 assign gpu_start = buffer_swap_internal;
+assign write_buffer_num_internal = gpu_done;
 
 endmodule

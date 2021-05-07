@@ -22,7 +22,7 @@ module frame_buffer (
 
     always_ff @( posedge gpu_clk ) begin : frame_buffer_update
         // Synchronous write to selected address from gpu
-        if (gpu_we)
+        if (gpu_we == 1'b1)
             // Update line from gpu input
             pixels[gpu_pixel_addr] <= gpu_pixel_data;
     end
