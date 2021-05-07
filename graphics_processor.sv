@@ -81,6 +81,8 @@ module graphics_processor(
 		raster_start = 1'b0;
 		reset = 1'b0;
 
+	unique case (state)
+
 		RESET : begin
 			reset = 1'b1;
 			next_state = RASTER_START;
@@ -99,6 +101,8 @@ module graphics_processor(
 		RASTER_DONE : begin
 			
 		end
+		
+	endcase
 
 	end
 endmodule
