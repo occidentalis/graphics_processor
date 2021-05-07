@@ -90,7 +90,8 @@ module graphics_processor(
 
 		RASTER_START : begin
 			raster_start = 1'b1;
-			next_state = RASTER;
+			if (!raster_done)	
+				next_state = RASTER;
 		end
 
 		RASTER : begin
@@ -101,7 +102,7 @@ module graphics_processor(
 		RASTER_DONE : begin
 			
 		end
-		
+
 	endcase
 
 	end

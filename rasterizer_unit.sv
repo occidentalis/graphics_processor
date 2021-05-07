@@ -13,8 +13,11 @@ enum {
 	DONE,
 	START,
 	TO_INT10, TO_INT11, TO_INT20, TO_INT21, TO_INT30, TO_INT31, TO_INT_WAIT,
-	GET_BOUNDS, SET_START,
-	FIRST_CHECK,
+	INT_CONVERSION,
+	GET_BOUNDS, INIT_XY,
+	CALC_EDGES,
+	EDGE_CHECK,
+	Z_CHECK,
 	RASTER
 } state, next_state;
 
@@ -67,6 +70,8 @@ logic [31:0] e1_in, e2_in, e3_in, e1, e2, e3;
 reg_32 e1_reg(.clk(clk), .write_en(e1_we), .reset(reset), .data_in(e1_in), .data_out(e1)); // Ei(x, y) = (x - Xi)dYi - (y - Yi)dXi
 reg_32 e2_reg(.clk(clk), .write_en(e2_we), .reset(reset), .data_in(e2_in), .data_out(e2)); // Ei(x+1, y) = Ei(x, y) + dYi
 reg_32 e3_reg(.clk(clk), .write_en(e3_we), .reset(reset), .data_in(e3_in), .data_out(e3));
+
+
 
 logic temp_we;
 logic [31:0] temp_in, temp;
@@ -151,35 +156,6 @@ always_comb begin
 			next_state = TO_INT10;
 		end
 
-		TO_INT10 : begin
-				next_state = TO_INT11;
-		end
-
-		TO_INT11 : begin
-				next_state = TO_INT20;
-		end
-
-		TO_INT20 : begin
-				next_state = TO_INT21;
-		end
-
-		TO_INT21 : begin
-				next_state = TO_INT30;
-		end
-
-		TO_INT30 : begin
-				next_state = TO_INT31;
-		end
-
-		TO_INT31 : begin
-				next_state = TO_INT_WAIT;
-		end
-
-		TO_INT_WAIT : begin
-			if (cycle_count == 3)
-				next_state = GET_BOUNDS;
-		end
-
 		GET_BOUNDS : begin
 			next_state = SET_START;
 		end
@@ -209,43 +185,30 @@ always_comb begin
 			reset = 1'b1;
 		end
 
-		TO_INT10 : begin
-			a0 = p1[0];
-		end
-
-		TO_INT11 : begin
-			a0 = p1[1];
-		end
-
-		TO_INT20 : begin
-			a0 = p2[0];
-		end
-
-		TO_INT21 : begin
-			p1x_we = 1'b1;
-			a0 = p2[1];
-		end
-
-		TO_INT30 : begin
-			p1y_we = 1'b1;
-			a0 = p3[0];
-		end
-
-		TO_INT31 : begin
-			p2x_we = 1'b1;
-			a0 = p3[1];
-		end
-
-		TO_INT_WAIT : begin
+		INT_CONVERSION : begin
 			case (cycle_count)
-				1 : p2y_we = 1'b1;
-				2 : p3x_we = 1'b1;
-				3 : p3y_we = 1'b1;
+				1 : a0 = p1[0];
+				2 : a0 = p1[1];
+				3 : a0 = p2[0];
+				4 : begin
+					a0 = p2[1];
+					p1x_we = 1;
+				end
+				5 : begin
+					a0 = p3[0];
+					p1y_we = 1;
+				end
+				6 : begin
+					a0 = p3[1];
+					p2x_we = 1;
+				end
+				7 : p2y_we = 1;
+				8 : p3x_we = 1;
+				9 : p3y_we = 1;
 			endcase
 		end
 
 		GET_BOUNDS : begin
-
 			rx_we = 1'b1;
 			ty_we = 1'b1;
 			lx_we = 1'b1;
@@ -277,7 +240,7 @@ always_comb begin
 			
 		end
 
-		SET_START : begin
+		INIT_XY : begin
 			curr_x_we = 1'b1;
 			curr_y_we = 1'b1;
 			x_inc_we = 1'b1;
@@ -286,31 +249,7 @@ always_comb begin
 			x_inc_in = 1;
 		end
 
-		RASTER : begin
-			fb_x = curr_x[9:0];
-			fb_y = curr_y[9:0];
-			if (e1 + (curr_x) * dy1 - (curr_y) * dx1 < 32'h80000000 &&
-				e2 + (curr_x) * dy2 - (curr_y) * dx2 < 32'h80000000 &&
-				e3 + (curr_x) * dy3 - (curr_y) * dx3 < 32'h80000000) begin
-				fb_we = 1'b1;
-				data = 4'b1111;
-			end else begin
-					fb_we = 1'b0;
-			end
-
-			if (curr_x + x_inc < lx || rx < curr_x + x_inc) begin
-				if (curr_y + 1 > by) next_state = DONE;
-				curr_y_we = 1'b1;
-				curr_y_in = curr_y + 1;
-				x_inc_we = 1'b1;
-				x_inc_in = -x_inc;
-			end else begin
-				curr_x_we = 1'b1;
-				curr_x_in = curr_x + x_inc;
-			end
-		end
-
-		FIRST_CHECK : begin
+		CALC_EDGES : begin
 			case (cycle_count)
 			// dX and dY for edge 1
 				1 : begin
@@ -480,6 +419,34 @@ always_comb begin
 					e3_in = q0;
 				end
 			endcase
+		end
+
+		EDGE_CHECK : begin
+			
+		end
+
+		RASTER : begin
+			fb_x = curr_x[9:0];
+			fb_y = curr_y[9:0];
+			if (e1 + (curr_x) * dy1 - (curr_y) * dx1 < 32'h80000000 &&
+				e2 + (curr_x) * dy2 - (curr_y) * dx2 < 32'h80000000 &&
+				e3 + (curr_x) * dy3 - (curr_y) * dx3 < 32'h80000000) begin
+				fb_we = 1'b1;
+				data = 4'b1111;
+			end else begin
+					fb_we = 1'b0;
+			end
+
+			if (curr_x + x_inc < lx || rx < curr_x + x_inc) begin
+				if (curr_y + 1 > by) next_state = DONE;
+				curr_y_we = 1'b1;
+				curr_y_in = curr_y + 1;
+				x_inc_we = 1'b1;
+				x_inc_in = -x_inc;
+			end else begin
+				curr_x_we = 1'b1;
+				curr_x_in = curr_x + x_inc;
+			end
 		end
 
 		DONE : begin
