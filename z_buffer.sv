@@ -3,8 +3,8 @@ module z_buffer (
     input logic w_en,
     input logic [16:0] w_addr,
     input logic [5:0] w_data,
-    input logic [16:0] r_addr
-    output logic [5:0] r_data,
+    input logic [16:0] r_addr,
+    output logic [5:0] r_data
 );
     // Instantiate internal frame buffer
     logic [5:0] pixels [76800];

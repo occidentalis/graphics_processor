@@ -5,14 +5,34 @@ timeprecision 1ns;
 
 logic clk, areset, start;
 logic [31:0] p1[3], p2[3], p3[3]; // in raster coordinates
-logic [31:0] near_clip_z, far_clip_z;
+logic [3:0] color;
 logic done;
+logic fb_we;
 logic [9:0] fb_x;
 logic [9:0] fb_y;
-logic [3:0] data;
-logic fb_we;
+logic [3:0] fb_data;
+logic zb_we;
+logic [9:0] zb_x;
+logic [9:0] zb_y;
+logic [5:0] zb_wdata;
+logic [5:0] zb_rdata;
 
-rasterizer_unit ru();
+rasterizer_unit ru(.*);
+
+assign zb_rdata = 6'b111111;
+
+// logic w_en;
+// logic [16:0] w_addr;
+// logic [5:0] w_data;
+// logic [16:0] r_addr;
+// logic [5:0] r_data;
+
+// z_buffer zu(.*);
+
+// assign w_en = zb_we;
+// assign w_addr = zb_x + 320 * zb_y;
+// assign w_data = zb_wdata;
+// assign r_addr = w_addr;
 
 int state;
 assign state = ru.state;
@@ -53,9 +73,11 @@ assign e2 = ru.e2;
 assign e3 = ru.e3;
 
 logic [31:0] c1, c2, c3;
-assign c1 = e1 + (curr_x) * dy1 - (curr_y) * dx1;
-assign c2 = e2 + (curr_x) * dy2 - (curr_y) * dx2;
-assign c3 = e3 + (curr_x) * dy3 - (curr_y) * dx3;
+assign c1 = ru.e1_pixel;
+assign c2 = ru.e2_pixel;
+assign c3 = ru.e3_pixel;
+
+
 
 always begin : CLOCK_GENERATION
     #1 clk = ~clk;
@@ -77,6 +99,7 @@ initial begin : INITIALIZATION
 end
 
 initial begin : TEST_VECTORS
+
     #2 areset = 1;
     #2 areset = 0;
     #10
