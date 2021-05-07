@@ -1,22 +1,20 @@
-#**************************************************************
-# This .sdc file is created by Terasic Tool.
-# Users are recommended to modify this file to match users logic.
-#**************************************************************
+set_time_format -unit ns -decimal_places 3
+
+
 
 #**************************************************************
 # Create Clock
 #**************************************************************
-# create_clock -period "10.0 MHz" [get_ports ADC_CLK_10]
-create_clock -period "50.0 MHz" [get_ports MAX10_CLK1_50]
-# create_clock -period "50.0 MHz" [get_ports MAX10_CLK2_50]
+
+create_clock -name {MAX10_CLK1_50} -period 20.000 -waveform { 0.000 10.000 } [get_ports {MAX10_CLK1_50}]
 
 
 #**************************************************************
 # Create Generated Clock
 #**************************************************************
-derive_pll_clocks
 
-
+derive_pll_clocks -create_base_clocks
+derive_clock_uncertainty
 
 #**************************************************************
 # Set Clock Latency
@@ -27,26 +25,23 @@ derive_pll_clocks
 #**************************************************************
 # Set Clock Uncertainty
 #**************************************************************
-derive_clock_uncertainty
 
+set_clock_uncertainty -rise_from [get_clocks {MAX10_CLK1_50}] -rise_to [get_clocks {MAX10_CLK1_50}]  0.020  
+set_clock_uncertainty -rise_from [get_clocks {MAX10_CLK1_50}] -fall_to [get_clocks {MAX10_CLK1_50}]  0.020   
+set_clock_uncertainty -fall_from [get_clocks {MAX10_CLK1_50}] -rise_to [get_clocks {MAX10_CLK1_50}]  0.020  
+set_clock_uncertainty -fall_from [get_clocks {MAX10_CLK1_50}] -fall_to [get_clocks {MAX10_CLK1_50}]  0.020  
 
 
 #**************************************************************
 # Set Input Delay
 #**************************************************************
-# suppose +- 100 ps skew
-# Board Delay (Data) + Propagation Delay - Board Delay (Clock)
-# max 5.4(max) +0.4(trace delay) +0.1 = 5.9
-# min 2.7(min) +0.4(trace delay) -0.1 = 3.0
-						  
+
+
+
 #**************************************************************
 # Set Output Delay
 #**************************************************************
-# suppose +- 100 ps skew
-# max : Board Delay (Data) - Board Delay (Clock) + tsu (External Device)
-# min : Board Delay (Data) - Board Delay (Clock) - th (External Device)
-# max 1.5+0.1 =1.6
-# min -0.8-0.1 = 0.9
+
 
 
 #**************************************************************
@@ -58,7 +53,8 @@ derive_clock_uncertainty
 #**************************************************************
 # Set False Path
 #**************************************************************
-# set_false_path -from [get_ports {SW[*]}]
+
+set_false_path -from [get_ports {Keys*}] 
 
 
 #**************************************************************
@@ -86,8 +82,6 @@ derive_clock_uncertainty
 
 
 #**************************************************************
-# Set Load
+# Set Net Delay
 #**************************************************************
-
-
 
