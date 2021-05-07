@@ -549,15 +549,15 @@ always_comb begin
 					e2_pixel_we = 1;
 					e2_pixel_in = e2_pixel - curr_y * dx2;
 					e3_pixel_we = 1;
-					e3_pixel_in = e2_pixel - curr_y * dx3;
+					e3_pixel_in = e3_pixel - curr_y * dx3;
 				end
 				3 : begin
 					e1_pixel_we = 1;
 					e1_pixel_in = e1_pixel + e1;
 					e2_pixel_we = 1;
-					e2_pixel_in = e1_pixel + e1;
+					e2_pixel_in = e2_pixel + e1;
 					e3_pixel_we = 1;
-					e3_pixel_in = e1_pixel + e1;
+					e3_pixel_in = e3_pixel + e1;
 				end
 				4 : begin
 					if (e1_pixel < 32'h80000000 &&

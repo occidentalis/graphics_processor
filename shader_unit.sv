@@ -6,7 +6,7 @@ module shader_unit (
 );
 
 enum {
-    DONE, START, CALC
+    DONE, START, CALC_NORMAL, COMPARE
 } state, next_state;
 
 int subcycle = 1;
@@ -43,11 +43,17 @@ reg_32 cx_reg(.clk(clk), .write_en(cx_we), .reset(reset), .data_in(cx_in), .data
 reg_32 cy_reg(.clk(clk), .write_en(cy_we), .reset(reset), .data_in(cy_in), .data_out(cy));
 reg_32 cz_reg(.clk(clk), .write_en(cz_we), .reset(reset), .data_in(cz_in), .data_out(cz));
 
+logic temp_we;
+logic [31:0] temp_in, temp;
+reg_32 ax_reg(.clk(clk), .write_en(temp_we), .reset(reset), .data_in(temp_in), .data_out(temp));
+
 always_comb begin : fsm
     state = next_state;
+
     reset = 1'b0;
     color = 4'b0;
     done = 1'b0;
+
 
     case (state)
         DONE : begin
@@ -60,8 +66,115 @@ always_comb begin : fsm
             next_state = CALC;
         end
 
-        CALC : begin
-            
+        CALC_NORMAL : begin
+            case (subcycle)
+                1 : begin
+                    addsub_a = p2[0]; // queue ax = p2x - p1x
+                    addsub_b = p1[0];
+                end
+                2 : begin
+                    addsub_a = p2[1]; // ay
+                    addsub_b = p1[1];
+                end
+                3 : begin
+                    addsub_a = p2[2]; // az
+                    addsub_b = p1[2];
+                end
+                4 : begin
+                    addsub_a = p3[0]; // queue bx = p3x - p1x
+                    addsub_b = p1[0];
+                end
+                5 : begin
+                    addsub_a = p3[1]; // by
+                    addsub_b = p1[1];
+                end
+                6 : begin
+                    addsub_a = p3[2]; // bz
+                    addsub_b = p1[2];
+                end
+                8 : begin
+                    ax_we = 1;
+                    ax_in = addsub_s;
+                end
+                9 : begin
+                    ay_we = 1;
+                    ay_in = addsub_s;
+                end
+                10 : begin
+                    az_we = 1;
+                    az_in = addsub_s;
+                end
+                11 : begin
+                    bx_we = 1;
+                    bx_in = addsub_s;
+                end
+                12 : begin
+                    by_we = 1;
+                    by_in = addsub_s;
+                end
+                13 : begin
+                    bz_we = 1;
+                    bz_in = addsub_s;
+                end
+                14 : begin
+                    mul_a = ay;
+                    mul_b = bz;
+                end
+                15 : begin
+                    mul_a = az;
+                    mul_b = by;
+                end
+                16 : begin
+                    mul_a = az;
+                    mul_b = bx;
+                end
+                17 : begin
+                    mul_a = ax;
+                    mul_b = bz;
+                end
+                18 : begin
+                    mul_a = ax;
+                    mul_b = by;
+                end
+                19 : begin
+                    mul_a = ay;
+                    mul_b = bx;
+
+                    temp_we = 1;
+                    temp_in = mul_q;
+                end
+                20 : begin
+                    addsub_a = temp;
+                    addsub_b = mul_q;
+                end
+                21 : begin
+                    temp_we = 1;
+                    temp_in = mul_q;
+                end
+                22 : begin
+                    addsub_a = temp;
+                    addsub_b = mul_q;
+                end
+                23 : begin
+                    temp_we = 1;
+                    temp_in = mul_q;
+                end
+                24 : begin
+                    addsub_a = temp;
+                    addsub_b = mul_q;
+                end
+                27 : begin
+                    cx_we = 1;
+                    cx_in = addsub_s;
+                end
+                29 : begin
+                    cy_we = 1;
+                    cy_in = addsub_s;
+                end
+                31 : begin
+                    cz_we = 1;
+                    cz_in = addsub_s;
+                end
         end
     endcase
 end
