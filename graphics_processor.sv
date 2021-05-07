@@ -29,14 +29,12 @@ module graphics_processor(
 	assign reset = ~Keys[0];
 	assign user_key = ~Keys[1];
 
-	gpu_pll_75 gpu_clk_gen (.inclk0(MAX10_CLK1_50), .c0(gpu_clk_150));
-
 	z_buffer zbuff (.clk(MAX10_CLK1_50), .w_en(zb_we), .w_addr(zb_address), .w_data(zb_wdata), .r_addr(zb_address), .r_data(zb_rdata));
 
 	address_translator_gpu zbuff_addr (.pixel_x(zb_x), .pixel_y(zb_y), .address(zb_address));
 
 	rasterizer_unit ru (
-		.clk(gpu_clk_150),
+		.clk(MAX10_CLK1_50),
 		.areset(reset),
 		.start(raster_start),
 		.p1(p1), .p2(p2), .p3(p3),
@@ -58,7 +56,7 @@ module graphics_processor(
 		.gpu_data(fb_data),
 		.buffer_select(buffer_num),
 		.gpu_we(fb_we),
-		.gpu_clk_150(gpu_clk_150),
+		.gpu_clk_150(MAX10_CLK1_50),
 		.vga_clk_50(MAX10_CLK1_50),
 		.vga_r(VGA_R),
 		.vga_g(VGA_G),
@@ -82,9 +80,16 @@ module graphics_processor(
 		p3[2] = 32'h3f800000;
 	end
 
-	always_ff @( posedge gpu_clk_150 ) begin : UPDATE_STATE_VAR
+	always_ff @( posedge MAX10_CLK1_50 ) begin : UPDATE_STATE_VAR
+		if (state != SWAP_BUFFERS) begin
 		// Update current state
-		state <= next_state;
+		state <= next_state;	
+		end else begin
+			if (VGA_VS == 1'b0) begin
+				buffer_num = ~buffer_num;
+				state <= next_state;
+			end
+		end
 		
 		// Update counter if held in state
 		if (next_state == state) begin
@@ -92,11 +97,6 @@ module graphics_processor(
 		end
 		else begin
 			counter <= 0;
-		end
-
-		// Swap buffers based on state
-		if (state == SWAP_BUFFERS) begin
-			buffer_num = ~buffer_num;
 		end
 	end
 
