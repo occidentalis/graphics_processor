@@ -563,7 +563,7 @@ always_comb begin
 					if (e1_pixel < 32'h80000000 &&
 						e2_pixel < 32'h80000000 &&
 						e3_pixel < 32'h80000000) begin
-						next_state = Z_CHECK;
+						next_state = RASTER;
 					end else begin
 						next_state = NEXT_PIXEL;
 					end
@@ -639,11 +639,12 @@ always_comb begin
 				end
 				52 : begin
 					if (to_int_q < zb_rdata) begin
+						next_state = RASTER;
+						zb_wdata = to_int_q;
 						zb_we = 1;
 						zb_x = curr_x[9:0];
 						zb_y = curr_y[9:0];
-						zb_wdata = to_int_q;
-						next_state = RASTER;
+						
 					end else begin
 						next_state = NEXT_PIXEL;
 					end
