@@ -225,7 +225,8 @@ always_comb begin
 		end
 
 		RASTER : begin
-			next_state = NEXT_PIXEL;
+			//if (cycle_count == 2)
+				next_state = NEXT_PIXEL;
 		end
 
 		NEXT_PIXEL : begin
