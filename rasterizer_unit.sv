@@ -120,9 +120,9 @@ always_comb begin
 	reset = 1'b0;
 	done = 1'b0;
 	fb_we = 1'b0;
-	fb_x = 10'b0;
-	fb_y = 10'b0;
-	fb_data = 4'b0;
+	fb_x = curr_x
+	fb_y = curr_y;
+	fb_data = color;
 	zb_we = 1'b0;
 	zb_x = 10'b0;
 	zb_y = 10'b0;
@@ -654,10 +654,7 @@ always_comb begin
 		end
 
 		RASTER : begin
-			fb_x = curr_x[9:0];
-			fb_y = curr_y[9:0];
 			fb_we = 1;
-			fb_data = 4'b1111;
 		end
 
 		NEXT_PIXEL : begin
