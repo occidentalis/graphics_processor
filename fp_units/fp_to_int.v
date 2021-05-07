@@ -73,7 +73,7 @@ endmodule
 // Retrieval info: 	<generic name="report_resources_to_xml" value="false" />
 // Retrieval info: 	<generic name="fxpt_width" value="32" />
 // Retrieval info: 	<generic name="fxpt_fraction" value="0" />
-// Retrieval info: 	<generic name="fxpt_sign" value="0" />
+// Retrieval info: 	<generic name="fxpt_sign" value="1" />
 // Retrieval info: 	<generic name="fp_out_format" value="single" />
 // Retrieval info: 	<generic name="fp_out_exp" value="8" />
 // Retrieval info: 	<generic name="fp_out_man" value="23" />

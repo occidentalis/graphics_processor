@@ -8,6 +8,7 @@ module multVecMatrix (
 );
 
 enum {
+	DONE,
 	START,
 
 	X_MUL1, Y_MUL1, Z_MUL1, W_MUL1, WAIT10,
@@ -26,10 +27,8 @@ enum {
 
 	X_NORM1, Y_NORM1, Z_NORM1, WAIT01, WAIT02, WAIT03, WAIT04,
 	WAIT05, WAIT06, WAIT07, WAIT08, WAIT09, WAIT010,
-	X_NORM2, Y_NORM2, Z_NORM2, W_NORM,
-	
-	DONE
-	 
+	X_NORM2, Y_NORM2, Z_NORM2, W_NORM
+
 } state, next_state;
 
 logic [31:0] w = 32'h3f800000; // 1.0
@@ -52,7 +51,7 @@ fp_mul    fpu1(.clk(clk), .areset(reset), .a(a), .b(b), .q(q_mul));
 fp_div    fpu2(.clk(clk), .areset(reset), .a(a), .b(b), .q(q_div));
 
 initial begin
-	state = DONE;
+
 end
 
 int cycle_count = 1;

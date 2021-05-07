@@ -10,12 +10,12 @@ module rasterizer_unit (
 );
 
 enum {
+	DONE,
 	START,
 	TO_INT10, TO_INT11, TO_INT20, TO_INT21, TO_INT30, TO_INT31, TO_INT_WAIT,
-	GET_BOUNDS,
+	GET_BOUNDS, SET_START,
 	FIRST_CHECK,
-	RASTER,
-	DONE
+	RASTER
 } state, next_state;
 
 logic reset;
@@ -73,7 +73,7 @@ logic [31:0] temp_in, temp;
 reg_32 temp_reg(.clk(clk), .write_en(temp_we), .reset(reset), .data_in(temp_in), .data_out(temp));
 
 initial begin
-	state = DONE;
+
 end
 
 int cycle_count = 1;
@@ -176,16 +176,20 @@ always_comb begin
 		end
 
 		TO_INT_WAIT : begin
-			if (cycle_count == 2)
+			if (cycle_count == 3)
 				next_state = GET_BOUNDS;
 		end
 
 		GET_BOUNDS : begin
+			next_state = SET_START;
+		end
+
+		SET_START : begin
 			next_state = FIRST_CHECK;
 		end
 
 		FIRST_CHECK : begin
-			if (cycle_count == 34)
+			if (cycle_count == 35)
 				next_state = RASTER;
 		end
 
@@ -199,8 +203,6 @@ always_comb begin
 				next_state = START;
 		end
 	endcase
-
-
 
 	unique case (state)
 		START : begin
@@ -216,29 +218,29 @@ always_comb begin
 		end
 
 		TO_INT20 : begin
-			p1x_we = 1'b1;
 			a0 = p2[0];
 		end
 
 		TO_INT21 : begin
-			p1y_we = 1'b1;
+			p1x_we = 1'b1;
 			a0 = p2[1];
 		end
 
 		TO_INT30 : begin
-			p2x_we = 1'b1;
+			p1y_we = 1'b1;
 			a0 = p3[0];
 		end
 
 		TO_INT31 : begin
-			p2y_we = 1'b1;
+			p2x_we = 1'b1;
 			a0 = p3[1];
 		end
 
 		TO_INT_WAIT : begin
 			case (cycle_count)
-				1 : p3x_we = 1'b1;
-				2 : p3y_we = 1'b1;
+				1 : p2y_we = 1'b1;
+				2 : p3x_we = 1'b1;
+				3 : p3y_we = 1'b1;
 			endcase
 		end
 
@@ -272,30 +274,36 @@ always_comb begin
 				if (p3y <= p2y) ty_in = p3y;		// p3 top of p2
 				else ty_in = p2y;					// p2 top of p3
 			end
+			
+		end
 
+		SET_START : begin
 			curr_x_we = 1'b1;
 			curr_y_we = 1'b1;
+			x_inc_we = 1'b1;
 			curr_x_in = lx;
 			curr_y_in = ty;
-
+			x_inc_in = 1;
 		end
 
 		RASTER : begin
 			fb_x = curr_x[9:0];
 			fb_y = curr_y[9:0];
-			if (e1 + (curr_x - lx) * dy1 - (curr_y - ty) * dx1 >= 0 &&
-				e2 + (curr_x - lx) * dy2 - (curr_y - ty) * dx2 >= 0 &&
-				e3 + (curr_x - lx) * dy3 - (curr_y - ty) * dx3 >= 0) begin
+			if (e1 + (curr_x) * dy1 - (curr_y) * dx1 < 32'h80000000 &&
+				e2 + (curr_x) * dy2 - (curr_y) * dx2 < 32'h80000000 &&
+				e3 + (curr_x) * dy3 - (curr_y) * dx3 < 32'h80000000) begin
 				fb_we = 1'b1;
 				data = 4'b1111;
+			end else begin
+					fb_we = 1'b0;
 			end
 
 			if (curr_x + x_inc < lx || rx < curr_x + x_inc) begin
-				if (curr_y + 1 > by) done = 1'b1;
+				if (curr_y + 1 > by) next_state = DONE;
 				curr_y_we = 1'b1;
 				curr_y_in = curr_y + 1;
 				x_inc_we = 1'b1;
-				x_inc_in = ~x_inc;
+				x_inc_in = -x_inc;
 			end else begin
 				curr_x_we = 1'b1;
 				curr_x_in = curr_x + x_inc;
@@ -336,42 +344,42 @@ always_comb begin
 					dx1_we = 1'b1;
 					dx1_in = s1;
 
-					a1 = curr_x; // begin E1 calcs
+					a1 = 0; // begin E1 calcs
 					b1 = p1[0];
 				end
 				9 : begin
 					dy1_we = 1'b1;
 					dy1_in = s1;
 
-					a1 = curr_y;
+					a1 = 0;
 					b1 = p1[1];
 				end
 				10 : begin
 					dx2_we = 1'b1;
 					dx2_in = s1;
 
-					a1 = curr_x;
+					a1 = 0;
 					b1 = p2[0];
 				end
 				11 : begin
 					dy2_we = 1'b1;
 					dy2_in = s1;
 
-					a1 = curr_y;
+					a1 = 0;
 					b1 = p2[1];
 				end
 				12 : begin
 					dx3_we = 1'b1;
 					dx3_in = s1;
 
-					a1 = curr_x;
+					a1 = 0;
 					b1 = p3[0];
 				end
 				13 : begin
 					dy3_we = 1'b1;
 					dy3_in = s1;
 
-					a1 = curr_y;
+					a1 = 0;
 					b1 = p3[1];
 				end
 			// Ei Multiplies
@@ -392,33 +400,31 @@ always_comb begin
 					b2 = dy2;
 
 					a0 = dy2;
-					dy1_we = 1'b1;
-					dy1_in = q0;
 				end
 				18 : begin
 					a2 = s1; // (y - y2) * dx2
 					b2 = dx2;
 
 					a0 = dx2;
-					dx1_we = 1'b1;
-					dx1_in = q0;
+					dy1_we = 1'b1;
+					dy1_in = q0;
 				end
 				19 : begin
 					a2 = s1; // (x - x3) * dy3
 					b2 = dy3;
 
 					a0 = dy3;
-					dy2_we = 1'b1;
-					dy2_in = q0;
+					dx1_we = 1'b1;
+					dx1_in = q0;
 				end
 				20 : begin
 					a2 = s1; // (y - y3) * dx3
 					b2 = dx3;
 
 					a0 = dx3;
-					dx2_we = 1'b1;
-					dx2_in = q0;
-
+					dy2_we = 1'b1;
+					dy2_in = q0;
+					
 					temp_we = 1'b1; // result of (x - x1) * dy1
 					temp_in = q2;
 				end
@@ -427,19 +433,22 @@ always_comb begin
 					a1 = temp; // E1(x, y) = (x - x1) * dy1 - (y - y1) * dx1
 					b1 = q2;
 
-					dy3_we = 1'b1;
-					dy3_in = q0;
+					dx2_we = 1'b1;
+					dx2_in = q0;
 				end
 				22 : begin
 					temp_we = 1'b1; // result of (x - x2) * dy2
 					temp_in = q2;
 
-					dx3_we = 1'b1;
-					dx3_in = q0;
+					dy3_we = 1'b1;
+					dy3_in = q0;		
 				end
 				23 : begin
 					a1 = temp; // E2(x, y) = (x - x2) * dy2 - (y - y2) * dx2
 					b1 = q2;
+
+					dx3_we = 1'b1;
+					dx3_in = q0;
 				end
 				24 : begin
 					temp_we = 1'b1; // result of (x - x3) * dy3
@@ -454,15 +463,19 @@ always_comb begin
 				end
 				30 : begin
 					a0 = s1;
+				end
+				31 : begin
 					e1_we = 1'b1;
-					e1_in = q0;	
+					e1_in = q0;
 				end
 				32 : begin
 					a0 = s1;
+				end
+				33 : begin
 					e2_we = 1'b1;
 					e2_in = q0;
 				end
-				34 : begin
+				35 : begin
 					e3_we = 1'b1;
 					e3_in = q0;
 				end
@@ -470,7 +483,7 @@ always_comb begin
 		end
 
 		DONE : begin
-			
+			done = 1'b1;
 		end
 	endcase
 end
