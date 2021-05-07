@@ -67,6 +67,30 @@ module graphics_processor(
 		.vga_vs(VGA_VS)
 	);
 
+	logic [31:0] proj_m [4][4];
+
+	always_comb begin
+		proj_m[0][0] = 32'h3f100000;
+		proj_m[0][1] = 32'b0;
+		proj_m[0][2] = 32'b0;
+		proj_m[0][3] = 32'b0;
+
+		proj_m[1][0] = 32'b0;
+		proj_m[1][1] = 32'h3f800000;
+		proj_m[1][2] = 32'b0;
+		proj_m[1][3] = 32'b0;
+
+		proj_m[2][0] = 32'b0;
+		proj_m[2][1] = 32'b0;
+		proj_m[2][2] = 32'hbf9c71c7;
+		proj_m[2][3] = 32'hbf800000;
+
+		proj_m[3][0] = 32'b0;
+		proj_m[3][1] = 32'b0;
+		proj_m[3][2] = 32'hc1b1c71c;
+		proj_m[3][3] = 32'b0;
+	end
+
 	always_comb begin : SET_CONSTANTS
 		// Constant points
 		p1[0] = 32'h428a0000; // (69.0, 69.0, 1.0)

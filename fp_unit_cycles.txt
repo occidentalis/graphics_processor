@@ -5,3 +5,7 @@ fp div is 13 cycles
 fp to int is 3 cycles
 
 int to fp is 5 cycles
+
+sqr is 6 cycles (at 50MHz)
+
+fp_dot is 8 cycles (at 50MHz)

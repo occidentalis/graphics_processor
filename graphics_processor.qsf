@@ -110,4 +110,8 @@ set_global_assignment -name EDA_TEST_BENCH_NAME testbench_ru -section_id eda_sim
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id testbench_ru
 set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "1000000 ns" -section_id testbench_ru
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME testbench_ru -section_id testbench_ru
+set_global_assignment -name QIP_FILE fp_units/fp_sqr.qip
+set_global_assignment -name SIP_FILE fp_units/fp_sqr.sip
+set_global_assignment -name QIP_FILE fp_units/fp_dot.qip
+set_global_assignment -name SIP_FILE fp_units/fp_dot.sip
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

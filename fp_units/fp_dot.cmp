@@ -1,0 +1,14 @@
+	component fp_dot is
+		port (
+			clk    : in  std_logic                     := 'X';             -- clk
+			areset : in  std_logic                     := 'X';             -- reset
+			a0     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- a0
+			b0     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- b0
+			a1     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- a1
+			b1     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- b1
+			a2     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- a2
+			b2     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- b2
+			q      : out std_logic_vector(31 downto 0)                     -- q
+		);
+	end component fp_dot;
+

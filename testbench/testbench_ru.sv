@@ -108,6 +108,7 @@ initial begin : INITIALIZATION
     p3[0] = 32'h42600000; // (56.0, 169.0, 1.0)
     p3[1] = 32'h43290000;
     p3[2] = 32'h3f800000;
+
 end
 
 initial begin : TEST_VECTORS
