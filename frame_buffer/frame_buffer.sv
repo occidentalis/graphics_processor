@@ -1,7 +1,7 @@
 
 module frame_buffer (
     // GPU Frame Buffer Inputs
-    input logic gpu_clk,
+    input logic gpu_clk, vga_clk,
     input logic [3:0] gpu_pixel_data,
     input logic [16:0] gpu_pixel_addr,
     input logic gpu_we,
@@ -21,13 +21,15 @@ module frame_buffer (
     //end
 
     always_ff @( posedge gpu_clk ) begin : frame_buffer_update
-        // Synchronous read from frame buffer
-        vga_pixel_data <= pixels[vga_pixel_addr];
-
         // Synchronous write to selected address from gpu
         if (gpu_we)
             // Update line from gpu input
             pixels[gpu_pixel_addr] <= gpu_pixel_data;
+    end
+
+    always_ff @( posedge vga_clk ) begin : blockName
+        // Synchronous read from frame buffer
+        vga_pixel_data <= pixels[vga_pixel_addr];
     end
 
 endmodule
