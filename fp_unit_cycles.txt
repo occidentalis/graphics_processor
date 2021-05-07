@@ -3,3 +3,5 @@ fp mul is 5 cycles
 fp div is 13 cycles
 
 fp to int is 3 cycles
+
+int to fp is 5 cycles

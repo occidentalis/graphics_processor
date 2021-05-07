@@ -12,7 +12,7 @@ logic [9:0] fb_y;
 logic [3:0] data;
 logic fb_we;
 
-rasterizer_unit ru(.*);
+rasterizer_unit ru();
 
 int state;
 assign state = ru.state;
