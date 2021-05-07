@@ -8,7 +8,7 @@ module graphics_processor(
 );
 
 	enum {
-		RENDER, NOT_RENDER
+		RESET, RASTER_START, RASTER, RASTER_DONE
 	} state, next_state;
 
 	logic gpu_clk_150;
@@ -79,6 +79,12 @@ module graphics_processor(
 		next_state = state;
 
 		raster_start = 1'b0;
+		reset = 1'b0;
+
+		RESET : begin
+			reset = 1'b1;
+			next_state = RASTER_START;
+		end
 
 		RASTER_START : begin
 			raster_start = 1'b1;
