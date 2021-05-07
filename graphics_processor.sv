@@ -21,24 +21,20 @@ module graphics_processor(
 	logic [3:0] fb_data;
 	logic fb_we;
 	int counter;
-	logic buffer_num;
 	logic zb_we;
 	logic [9:0] zb_x, zb_y;
 	logic [16:0] zb_address;
 	logic [5:0] zb_wdata, zb_rdata;
+	logic gpu_access;
 
 	assign reset = ~Keys[0];
 	assign user_key = ~Keys[1];
-
-	z_buffer zbuff (.clk(MAX10_CLK1_50), .w_en(zb_we), .w_addr(zb_address), .w_data(zb_wdata), .r_addr(zb_address), .r_data(zb_rdata));
-
-	address_translator_gpu zbuff_addr (.pixel_x(zb_x), .pixel_y(zb_y), .address(zb_address));
 
 	rasterizer_unit ru (
 		.clk(MAX10_CLK1_50),
 		.areset(reset),
 		.start(raster_start),
-		.p1(pru1), .p2(pru2), .p3(pru3),
+		.p1(p4), .p2(p5), .p3(p6),
 		.done(raster_done),
 		.fb_x(fb_x), .fb_y(fb_y),
 		.fb_data(fb_data),
@@ -50,15 +46,15 @@ module graphics_processor(
 		.zb_rdata(zb_rdata)
 	);
 
-	frame_director fb (
+	frame_buffer_top fb (
+		.gpu_access(gpu_access),
 		.reset(reset),
 		.gpu_x(fb_x),
 		.gpu_y(fb_y),
 		.gpu_data(fb_data),
-		.buffer_select(buffer_num),
 		.gpu_we(fb_we),
-		.gpu_clk_150(MAX10_CLK1_50),
-		.vga_clk_50(MAX10_CLK1_50),
+		.gpu_clk(MAX10_CLK1_50),
+		.vga_clk(MAX10_CLK1_50),
 		.vga_r(VGA_R),
 		.vga_g(VGA_G),
 		.vga_b(VGA_B),
@@ -95,15 +91,8 @@ module graphics_processor(
 	end
 
 	always_ff @( posedge MAX10_CLK1_50 ) begin : UPDATE_STATE_VAR
-		if (state != SWAP_BUFFERS) begin
 		// Update current state
 		state <= next_state;	
-		end else begin
-			if (VGA_VS == 1'b0) begin
-				buffer_num = ~buffer_num;
-				state <= next_state;
-			end
-		end
 		
 		// Update counter if held in state
 		if (next_state == state) begin
@@ -148,22 +137,27 @@ module graphics_processor(
 		case (state)
 			HALTED : begin
 				raster_start = 1'b0;
+				gpu_access = 1'b0;
 			end
 			HALTED_DEBOUNCE : begin
 				raster_start = 1'b0;
+				gpu_access = 1'b0;
 			end
 			RASTER1 : begin
 				raster_start = 1'b1;
+				gpu_access = 1'b1;
 			end
 			RASTER2 : begin
 				raster_start = 1'b0;
+				gpu_access = 1'b1;
 			end
 			SWAP_BUFFERS : begin
 				raster_start = 1'b0;
+				gpu_access = 1'b0;
 			end
 		endcase
 
-		case (buffer_num)
+		case (1'b0)
 			1'b0 : begin
 					pru1 = p1;
 					pru2 = p2;
