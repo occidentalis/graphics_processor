@@ -49,17 +49,7 @@ module graphics_processor(
 
 	initial begin
 
-		p1[0] = 32'h428a0000; // (69.0, 69.0, 1.0)
-		p1[1] = 32'h428a0000;
-		p1[2] = 32'h3f800000;
-
-		p2[0] = 32'h428a0000; // (69.0, 169.0, 1.0)
-		p2[1] = 32'h43290000;
-		p2[2] = 32'h3f800000;
-
-		p3[0] = 32'h43290000; // (169.0, 69.0, 1.0)
-		p3[1] = 32'h428a0000;
-		p3[2] = 32'h3f800000;
+		
 	end
 
 	int cycle_count = 1;
@@ -74,9 +64,35 @@ module graphics_processor(
 
 	always_comb begin
 
+		p1[0] = 32'h428a0000; // (69.0, 69.0, 1.0)
+		p1[1] = 32'h428a0000;
+		p1[2] = 32'h3f800000;
+
+		p2[0] = 32'h428a0000; // (69.0, 169.0, 1.0)
+		p2[1] = 32'h43290000;
+		p2[2] = 32'h3f800000;
+
+		p3[0] = 32'h43290000; // (169.0, 69.0, 1.0)
+		p3[1] = 32'h428a0000;
+		p3[2] = 32'h3f800000;
+
 		next_state = state;
 
-		raster_start = 1'b1;
+		raster_start = 1'b0;
+
+		RASTER_START : begin
+			raster_start = 1'b1;
+			next_state = RASTER;
+		end
+
+		RASTER : begin
+			if (raster_done)
+				next_state = RASTER_DONE;
+		end
+
+		RASTER_DONE : begin
+			
+		end
 
 	end
 endmodule
