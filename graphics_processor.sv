@@ -21,11 +21,19 @@ module graphics_processor(
 	logic fb_we;
 	int counter;
 	logic buffer_num;
+	logic zb_we;
+	logic [9:0] zb_x, zb_y;
+	logic [16:0] zb_address;
+	logic [5:0] zb_wdata, zb_rdata;
 
 	assign reset = ~Keys[0];
 	assign user_key = ~Keys[1];
 
 	gpu_pll_75 gpu_clk_gen (.inclk0(MAX10_CLK1_50), .c0(gpu_clk_150));
+
+	z_buffer zbuff (.clk(MAX10_CLK1_50), .w_en(zb_we), .w_addr(zb_address), .w_data(zb_wdata), .r_addr(zb_address), .r_data(zb_rdata));
+
+	address_translator_gpu zbuff_addr (.pixel_x(zb_x), .pixel_y(zb_y), .address(zb_address));
 
 	rasterizer_unit ru (
 		.clk(gpu_clk_150),
@@ -35,7 +43,12 @@ module graphics_processor(
 		.done(raster_done),
 		.fb_x(fb_x), .fb_y(fb_y),
 		.fb_data(fb_data),
-		.fb_we(fb_we)
+		.fb_we(fb_we),
+		.zb_we(zb_we),
+		.zb_x(zb_x),
+		.zb_y(zb_y),
+		.zb_wdata(zb_wdata),
+		.zb_rdata(zb_rdata)
 	);
 
 	frame_director fb (

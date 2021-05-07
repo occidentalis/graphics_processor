@@ -38,7 +38,7 @@
 
 set_global_assignment -name FAMILY "MAX 10"
 set_global_assignment -name DEVICE 10M50DAF484C7G
-set_global_assignment -name TOP_LEVEL_ENTITY rasterizer_unit
+set_global_assignment -name TOP_LEVEL_ENTITY graphics_processor
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 18.1.0
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "17:36:04  APRIL 29, 2021"
 set_global_assignment -name LAST_QUARTUS_VERSION "18.1.0 Lite Edition"
@@ -66,6 +66,22 @@ set_location_assignment PIN_V1 -to VGA_R[1]
 set_location_assignment PIN_AA1 -to VGA_R[0]
 set_location_assignment PIN_N1 -to VGA_VS
 set_location_assignment PIN_P11 -to MAX10_CLK1_50
+set_global_assignment -name EDA_TEST_BENCH_FILE testbench/testbench_ru.sv -section_id testbench_ru
+set_global_assignment -name ENABLE_OCT_DONE ON
+set_global_assignment -name EXTERNAL_FLASH_FALLBACK_ADDRESS 00000000
+set_global_assignment -name USE_CONFIGURATION_DEVICE OFF
+set_global_assignment -name CRC_ERROR_OPEN_DRAIN OFF
+set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -rise
+set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
+set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
+set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
+set_global_assignment -name INTERNAL_FLASH_UPDATE_MODE "SINGLE IMAGE WITH ERAM"
+set_global_assignment -name EDA_TEST_BENCH_ENABLE_STATUS TEST_BENCH_MODE -section_id eda_simulation
+set_global_assignment -name SYSTEMVERILOG_FILE z_buffer.sv
+set_global_assignment -name SYSTEMVERILOG_FILE frame_buffer/frame_director.sv
+set_global_assignment -name SYSTEMVERILOG_FILE frame_buffer/frame_buffer.sv
+set_global_assignment -name SYSTEMVERILOG_FILE frame_buffer/address_translator_vga.sv
+set_global_assignment -name SYSTEMVERILOG_FILE frame_buffer/address_translator_gpu.sv
 set_global_assignment -name SYSTEMVERILOG_FILE testbench/testbench_ru.sv
 set_global_assignment -name SDC_FILE lab6.sdc
 set_global_assignment -name SYSTEMVERILOG_FILE VGA_controller.sv
@@ -84,19 +100,9 @@ set_global_assignment -name QIP_FILE gpu_pll.qip
 set_global_assignment -name QIP_FILE fp_units/fp_to_int.qip
 set_global_assignment -name SIP_FILE fp_units/fp_to_int.sip
 set_global_assignment -name QIP_FILE gpu_pll_75.qip
-set_global_assignment -name EDA_TEST_BENCH_FILE testbench/testbench_ru.sv -section_id testbench_ru
 set_global_assignment -name QIP_FILE fp_units/int_to_fp.qip
 set_global_assignment -name SIP_FILE fp_units/int_to_fp.sip
-set_global_assignment -name ENABLE_OCT_DONE ON
-set_global_assignment -name EXTERNAL_FLASH_FALLBACK_ADDRESS 00000000
-set_global_assignment -name USE_CONFIGURATION_DEVICE OFF
-set_global_assignment -name CRC_ERROR_OPEN_DRAIN OFF
-set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -rise
-set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
-set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
-set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_global_assignment -name INTERNAL_FLASH_UPDATE_MODE "SINGLE IMAGE WITH ERAM"
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
