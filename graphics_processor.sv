@@ -34,7 +34,7 @@ module graphics_processor(
 		.p1(p1), .p2(p2), .p3(p3),
 		.done(raster_done),
 		.fb_x(fb_x), .fb_y(fb_y),
-		.data(fb_data),
+		.fb_data(fb_data),
 		.fb_we(fb_we)
 	);
 
