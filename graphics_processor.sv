@@ -1,4 +1,5 @@
 module graphics_processor(
+	input  logic [1:0] Keys,
 	input  logic MAX10_CLK1_50,
     output logic VGA_HS,
     output logic VGA_VS,
@@ -8,18 +9,23 @@ module graphics_processor(
 );
 
 	enum {
-		RESET, RASTER_START, RASTER, RASTER_DONE
+		HALTED, HALTED_DEBOUNCE, RASTER1, RASTER2, SWAP_BUFFERS
 	} state, next_state;
 
 	logic gpu_clk_150;
-	logic reset, raster_start;
+	logic reset, raster_start, user_key;
 	logic [31:0] p1[3], p2[3], p3[3];
 	logic raster_done;
 	logic [9:0] fb_x, fb_y;
 	logic [3:0] fb_data;
 	logic fb_we;
+	int counter;
+	logic buffer_num;
 
-	gpu_pll gpu_clk_gen (.areset(1'b0), .inclk0(MAX10_CLK1_50), .c0(gpu_clk_150));
+	assign reset = ~Keys[0];
+	assign user_key = ~Keys[1];
+
+	gpu_pll_75 gpu_clk_gen (.inclk0(MAX10_CLK1_50), .c0(gpu_clk_150));
 
 	rasterizer_unit ru (
 		.clk(gpu_clk_150),
@@ -32,11 +38,12 @@ module graphics_processor(
 		.fb_we(fb_we)
 	);
 
-	frame_buffer_top fb (
+	frame_director fb (
 		.reset(reset),
 		.gpu_x(fb_x),
 		.gpu_y(fb_y),
 		.gpu_data(fb_data),
+		.buffer_select(buffer_num),
 		.gpu_we(fb_we),
 		.gpu_clk_150(gpu_clk_150),
 		.vga_clk_50(MAX10_CLK1_50),
@@ -47,23 +54,8 @@ module graphics_processor(
 		.vga_vs(VGA_VS)
 	);
 
-	initial begin
-
-		
-	end
-
-	int cycle_count = 1;
-	always_ff @(posedge gpu_clk_150) begin : blockName
-		if (state == next_state)
-			cycle_count <= cycle_count + 1;
-		else 
-			cycle_count <= 1;
-
-		state <= next_state;
-	end
-
-	always_comb begin
-
+	always_comb begin : SET_CONSTANTS
+		// Constant points
 		p1[0] = 32'h428a0000; // (69.0, 69.0, 1.0)
 		p1[1] = 32'h428a0000;
 		p1[2] = 32'h3f800000;
@@ -75,34 +67,74 @@ module graphics_processor(
 		p3[0] = 32'h43290000; // (169.0, 69.0, 1.0)
 		p3[1] = 32'h428a0000;
 		p3[2] = 32'h3f800000;
-
-		next_state = state;
-
-		raster_start = 1'b0;
-		reset = 1'b0;
-
-	unique case (state)
-
-		RESET : begin
-			reset = 1'b1;
-			next_state = RASTER_START;
-		end
-
-		RASTER_START : begin
-			raster_start = 1'b1;
-			next_state = RASTER;
-		end
-
-		RASTER : begin
-			if (raster_done)
-				next_state = RASTER_DONE;
-		end
-
-		RASTER_DONE : begin
-			
-		end
-		
-	endcase
-
 	end
+
+	always_ff @( posedge gpu_clk_150 ) begin : UPDATE_STATE_VAR
+		// Update current state
+		state <= next_state;
+		
+		// Update counter if held in state
+		if (next_state == state) begin
+			counter <= counter + 1;
+		end
+		else begin
+			counter <= 0;
+		end
+
+		// Swap buffers based on state
+		if (state == SWAP_BUFFERS) begin
+			buffer_num = ~buffer_num;
+		end
+	end
+
+	always_comb begin : SET_NEXT_STATES
+		case (state)
+			HALTED : begin
+				if (user_key == 1'b1)
+					next_state = HALTED_DEBOUNCE;
+				else
+					next_state = HALTED;
+			end
+			HALTED_DEBOUNCE : begin
+				if (user_key == 1'b0)
+					next_state = RASTER1;
+				else
+					next_state = HALTED_DEBOUNCE;
+			end
+			RASTER1 : begin
+				if (counter > 2)
+					next_state = RASTER2;
+				else
+					next_state = RASTER1;
+			end
+			RASTER2 : begin
+				if (raster_done == 1'b1)
+					next_state = SWAP_BUFFERS;
+				else
+					next_state = RASTER2;
+			end
+			SWAP_BUFFERS : begin
+				next_state = HALTED;
+			end
+		endcase
+
+		case (state)
+			HALTED : begin
+				raster_start = 1'b0;
+			end
+			HALTED_DEBOUNCE : begin
+				raster_start = 1'b0;
+			end
+			RASTER1 : begin
+				raster_start = 1'b1;
+			end
+			RASTER2 : begin
+				raster_start = 1'b0;
+			end
+			SWAP_BUFFERS : begin
+				raster_start = 1'b0;
+			end
+		endcase
+	end
+
 endmodule
