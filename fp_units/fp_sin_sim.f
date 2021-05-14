@@ -1,0 +1,4 @@
+fp_sin_sim/fp_sin_memoryC0_uid155_sinPiXTables_lutmem.hex
+fp_sin_sim/fp_sin_memoryC1_uid158_sinPiXTables_lutmem.hex
+fp_sin_sim/fp_sin_memoryC2_uid161_sinPiXTables_lutmem.hex
+fp_sin_sim/fp_sin.vo

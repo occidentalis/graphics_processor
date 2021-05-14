@@ -16,7 +16,7 @@
 -- ---------------------------------------------------------------------------
 
 -- VHDL created from fp_to_int_0002
--- VHDL created on Thu May 06 17:05:00 2021
+-- VHDL created on Tue May 11 07:23:44 2021
 
 
 library IEEE;
@@ -56,7 +56,6 @@ architecture normal of fp_to_int_0002 is
     signal excZ_x_uid11_fpToFxPTest_q : STD_LOGIC_VECTOR (0 downto 0);
     signal expXIsMax_uid12_fpToFxPTest_qi : STD_LOGIC_VECTOR (0 downto 0);
     signal expXIsMax_uid12_fpToFxPTest_q : STD_LOGIC_VECTOR (0 downto 0);
-    signal fracXIsZero_uid13_fpToFxPTest_qi : STD_LOGIC_VECTOR (0 downto 0);
     signal fracXIsZero_uid13_fpToFxPTest_q : STD_LOGIC_VECTOR (0 downto 0);
     signal fracXIsNotZero_uid14_fpToFxPTest_q : STD_LOGIC_VECTOR (0 downto 0);
     signal excI_x_uid15_fpToFxPTest_q : STD_LOGIC_VECTOR (0 downto 0);
@@ -159,13 +158,8 @@ architecture normal of fp_to_int_0002 is
     signal rightShiftStage0_uid70_rightShiferNoStickyOut_uid38_fpToFxPTest_selLSBs_merged_bit_select_c : STD_LOGIC_VECTOR (0 downto 0);
     signal rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_selLSBs_merged_bit_select_b : STD_LOGIC_VECTOR (1 downto 0);
     signal rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_selLSBs_merged_bit_select_c : STD_LOGIC_VECTOR (0 downto 0);
-    signal redist0_udf_uid29_fpToFxPTest_n_3_q : STD_LOGIC_VECTOR (0 downto 0);
-    signal redist1_ovfExpRange_uid27_fpToFxPTest_n_3_q : STD_LOGIC_VECTOR (0 downto 0);
-    signal redist2_signX_uid25_fpToFxPTest_b_2_q : STD_LOGIC_VECTOR (0 downto 0);
-    signal redist3_signX_uid25_fpToFxPTest_b_3_q : STD_LOGIC_VECTOR (0 downto 0);
-    signal redist4_fracXIsZero_uid13_fpToFxPTest_q_2_q : STD_LOGIC_VECTOR (0 downto 0);
-    signal redist5_expXIsMax_uid12_fpToFxPTest_q_3_q : STD_LOGIC_VECTOR (0 downto 0);
-    signal redist6_frac_x_uid10_fpToFxPTest_b_1_q : STD_LOGIC_VECTOR (22 downto 0);
+    signal redist0_signX_uid25_fpToFxPTest_b_1_q : STD_LOGIC_VECTOR (0 downto 0);
+    signal redist1_frac_x_uid10_fpToFxPTest_b_1_q : STD_LOGIC_VECTOR (22 downto 0);
 
 begin
 
@@ -185,10 +179,10 @@ begin
     -- signX_uid25_fpToFxPTest(BITSELECT,24)@0
     signX_uid25_fpToFxPTest_b <= STD_LOGIC_VECTOR(a(31 downto 31));
 
-    -- redist2_signX_uid25_fpToFxPTest_b_2(DELAY,109)
-    redist2_signX_uid25_fpToFxPTest_b_2 : dspba_delay
-    GENERIC MAP ( width => 1, depth => 2, reset_kind => "ASYNC" )
-    PORT MAP ( xin => signX_uid25_fpToFxPTest_b, xout => redist2_signX_uid25_fpToFxPTest_b_2_q, clk => clk, aclr => areset );
+    -- redist0_signX_uid25_fpToFxPTest_b_1(DELAY,107)
+    redist0_signX_uid25_fpToFxPTest_b_1 : dspba_delay
+    GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
+    PORT MAP ( xin => signX_uid25_fpToFxPTest_b, xout => redist0_signX_uid25_fpToFxPTest_b_1_q, clk => clk, aclr => areset );
 
     -- GND(CONSTANT,0)
     GND_q <= "0";
@@ -251,13 +245,13 @@ begin
     -- frac_x_uid10_fpToFxPTest(BITSELECT,9)@0
     frac_x_uid10_fpToFxPTest_b <= a(22 downto 0);
 
-    -- redist6_frac_x_uid10_fpToFxPTest_b_1(DELAY,113)
-    redist6_frac_x_uid10_fpToFxPTest_b_1 : dspba_delay
+    -- redist1_frac_x_uid10_fpToFxPTest_b_1(DELAY,108)
+    redist1_frac_x_uid10_fpToFxPTest_b_1 : dspba_delay
     GENERIC MAP ( width => 23, depth => 1, reset_kind => "ASYNC" )
-    PORT MAP ( xin => frac_x_uid10_fpToFxPTest_b, xout => redist6_frac_x_uid10_fpToFxPTest_b_1_q, clk => clk, aclr => areset );
+    PORT MAP ( xin => frac_x_uid10_fpToFxPTest_b, xout => redist1_frac_x_uid10_fpToFxPTest_b_1_q, clk => clk, aclr => areset );
 
     -- oFracX_uid23_fpToFxPTest(BITJOIN,22)@1
-    oFracX_uid23_fpToFxPTest_q <= invExcXZ_uid22_fpToFxPTest_q & redist6_frac_x_uid10_fpToFxPTest_b_1_q;
+    oFracX_uid23_fpToFxPTest_q <= invExcXZ_uid22_fpToFxPTest_q & redist1_frac_x_uid10_fpToFxPTest_b_1_q;
 
     -- shifterIn_uid37_fpToFxPTest(BITJOIN,36)@1
     shifterIn_uid37_fpToFxPTest_q <= oFracX_uid23_fpToFxPTest_q & cstAllZWE_uid8_fpToFxPTest_q;
@@ -418,49 +412,33 @@ begin
     rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_selLSBs_merged_bit_select_b <= rightShiftStageSel5Dto3_uid69_rightShiferNoStickyOut_uid38_fpToFxPTest_merged_bit_select_c(1 downto 0);
     rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_selLSBs_merged_bit_select_c <= rightShiftStageSel5Dto3_uid69_rightShiferNoStickyOut_uid38_fpToFxPTest_merged_bit_select_c(2 downto 2);
 
-    -- rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_mfinal(MUX,103)@1 + 1
+    -- rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_mfinal(MUX,103)@1
     rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_mfinal_s <= rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_selLSBs_merged_bit_select_c;
-    rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_mfinal_clkproc: PROCESS (clk, areset)
+    rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_mfinal_combproc: PROCESS (rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_mfinal_s, rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_msplit_0_q, rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_msplit_1_q)
     BEGIN
-        IF (areset = '1') THEN
-            rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_mfinal_q <= (others => '0');
-        ELSIF (clk'EVENT AND clk = '1') THEN
-            CASE (rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_mfinal_s) IS
-                WHEN "0" => rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_mfinal_q <= rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_msplit_0_q;
-                WHEN "1" => rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_mfinal_q <= rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_msplit_1_q;
-                WHEN OTHERS => rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_mfinal_q <= (others => '0');
-            END CASE;
-        END IF;
+        CASE (rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_mfinal_s) IS
+            WHEN "0" => rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_mfinal_q <= rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_msplit_0_q;
+            WHEN "1" => rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_mfinal_q <= rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_msplit_1_q;
+            WHEN OTHERS => rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_mfinal_q <= (others => '0');
+        END CASE;
     END PROCESS;
 
-    -- zRightShiferNoStickyOut_uid41_fpToFxPTest(BITJOIN,40)@2
+    -- zRightShiferNoStickyOut_uid41_fpToFxPTest(BITJOIN,40)@1
     zRightShiferNoStickyOut_uid41_fpToFxPTest_q <= GND_q & rightShiftStage1_uid93_rightShiferNoStickyOut_uid38_fpToFxPTest_mfinal_q;
 
-    -- xXorSignE_uid42_fpToFxPTest(LOGICAL,41)@2
-    xXorSignE_uid42_fpToFxPTest_b <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR((32 downto 1 => redist2_signX_uid25_fpToFxPTest_b_2_q(0)) & redist2_signX_uid25_fpToFxPTest_b_2_q));
+    -- xXorSignE_uid42_fpToFxPTest(LOGICAL,41)@1
+    xXorSignE_uid42_fpToFxPTest_b <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR((32 downto 1 => redist0_signX_uid25_fpToFxPTest_b_1_q(0)) & redist0_signX_uid25_fpToFxPTest_b_1_q));
     xXorSignE_uid42_fpToFxPTest_q <= zRightShiferNoStickyOut_uid41_fpToFxPTest_q xor xXorSignE_uid42_fpToFxPTest_b;
 
-    -- sPostRndFull_uid44_fpToFxPTest(ADD,43)@2 + 1
+    -- sPostRndFull_uid44_fpToFxPTest(ADD,43)@1
     sPostRndFull_uid44_fpToFxPTest_a <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR((33 downto 33 => xXorSignE_uid42_fpToFxPTest_q(32)) & xXorSignE_uid42_fpToFxPTest_q));
     sPostRndFull_uid44_fpToFxPTest_b <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR((33 downto 3 => d0_uid43_fpToFxPTest_q(2)) & d0_uid43_fpToFxPTest_q));
-    sPostRndFull_uid44_fpToFxPTest_clkproc: PROCESS (clk, areset)
-    BEGIN
-        IF (areset = '1') THEN
-            sPostRndFull_uid44_fpToFxPTest_o <= (others => '0');
-        ELSIF (clk'EVENT AND clk = '1') THEN
-            sPostRndFull_uid44_fpToFxPTest_o <= STD_LOGIC_VECTOR(SIGNED(sPostRndFull_uid44_fpToFxPTest_a) + SIGNED(sPostRndFull_uid44_fpToFxPTest_b));
-        END IF;
-    END PROCESS;
+    sPostRndFull_uid44_fpToFxPTest_o <= STD_LOGIC_VECTOR(SIGNED(sPostRndFull_uid44_fpToFxPTest_a) + SIGNED(sPostRndFull_uid44_fpToFxPTest_b));
     sPostRndFull_uid44_fpToFxPTest_q <= sPostRndFull_uid44_fpToFxPTest_o(33 downto 0);
 
-    -- sPostRnd_uid45_fpToFxPTest(BITSELECT,44)@3
+    -- sPostRnd_uid45_fpToFxPTest(BITSELECT,44)@1
     sPostRnd_uid45_fpToFxPTest_in <= sPostRndFull_uid44_fpToFxPTest_q(32 downto 0);
     sPostRnd_uid45_fpToFxPTest_b <= sPostRnd_uid45_fpToFxPTest_in(32 downto 1);
-
-    -- redist3_signX_uid25_fpToFxPTest_b_3(DELAY,110)
-    redist3_signX_uid25_fpToFxPTest_b_3 : dspba_delay
-    GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
-    PORT MAP ( xin => redist2_signX_uid25_fpToFxPTest_b_2_q, xout => redist3_signX_uid25_fpToFxPTest_b_3_q, clk => clk, aclr => areset );
 
     -- udfExpVal_uid28_fpToFxPTest(CONSTANT,27)
     udfExpVal_uid28_fpToFxPTest_q <= "01111101";
@@ -478,16 +456,11 @@ begin
     END PROCESS;
     udf_uid29_fpToFxPTest_n(0) <= not (udf_uid29_fpToFxPTest_o(10));
 
-    -- redist0_udf_uid29_fpToFxPTest_n_3(DELAY,107)
-    redist0_udf_uid29_fpToFxPTest_n_3 : dspba_delay
-    GENERIC MAP ( width => 1, depth => 2, reset_kind => "ASYNC" )
-    PORT MAP ( xin => udf_uid29_fpToFxPTest_n, xout => redist0_udf_uid29_fpToFxPTest_n_3_q, clk => clk, aclr => areset );
-
-    -- sPostRnd_uid46_fpToFxPTest(BITSELECT,45)@3
+    -- sPostRnd_uid46_fpToFxPTest(BITSELECT,45)@1
     sPostRnd_uid46_fpToFxPTest_in <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR((34 downto 34 => sPostRndFull_uid44_fpToFxPTest_q(33)) & sPostRndFull_uid44_fpToFxPTest_q));
     sPostRnd_uid46_fpToFxPTest_b <= STD_LOGIC_VECTOR(sPostRnd_uid46_fpToFxPTest_in(34 downto 1));
 
-    -- rndOvfPos_uid47_fpToFxPTest(COMPARE,46)@3
+    -- rndOvfPos_uid47_fpToFxPTest(COMPARE,46)@1
     rndOvfPos_uid47_fpToFxPTest_a <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR("0000" & maxPosValueS_uid39_fpToFxPTest_q));
     rndOvfPos_uid47_fpToFxPTest_b <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR((35 downto 34 => sPostRnd_uid46_fpToFxPTest_b(33)) & sPostRnd_uid46_fpToFxPTest_b));
     rndOvfPos_uid47_fpToFxPTest_o <= STD_LOGIC_VECTOR(SIGNED(rndOvfPos_uid47_fpToFxPTest_a) - SIGNED(rndOvfPos_uid47_fpToFxPTest_b));
@@ -509,24 +482,11 @@ begin
     END PROCESS;
     ovfExpRange_uid27_fpToFxPTest_n(0) <= not (ovfExpRange_uid27_fpToFxPTest_o(10));
 
-    -- redist1_ovfExpRange_uid27_fpToFxPTest_n_3(DELAY,108)
-    redist1_ovfExpRange_uid27_fpToFxPTest_n_3 : dspba_delay
-    GENERIC MAP ( width => 1, depth => 2, reset_kind => "ASYNC" )
-    PORT MAP ( xin => ovfExpRange_uid27_fpToFxPTest_n, xout => redist1_ovfExpRange_uid27_fpToFxPTest_n_3_q, clk => clk, aclr => areset );
-
     -- cstZeroWF_uid7_fpToFxPTest(CONSTANT,6)
     cstZeroWF_uid7_fpToFxPTest_q <= "00000000000000000000000";
 
-    -- fracXIsZero_uid13_fpToFxPTest(LOGICAL,12)@1 + 1
-    fracXIsZero_uid13_fpToFxPTest_qi <= "1" WHEN cstZeroWF_uid7_fpToFxPTest_q = redist6_frac_x_uid10_fpToFxPTest_b_1_q ELSE "0";
-    fracXIsZero_uid13_fpToFxPTest_delay : dspba_delay
-    GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
-    PORT MAP ( xin => fracXIsZero_uid13_fpToFxPTest_qi, xout => fracXIsZero_uid13_fpToFxPTest_q, clk => clk, aclr => areset );
-
-    -- redist4_fracXIsZero_uid13_fpToFxPTest_q_2(DELAY,111)
-    redist4_fracXIsZero_uid13_fpToFxPTest_q_2 : dspba_delay
-    GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
-    PORT MAP ( xin => fracXIsZero_uid13_fpToFxPTest_q, xout => redist4_fracXIsZero_uid13_fpToFxPTest_q_2_q, clk => clk, aclr => areset );
+    -- fracXIsZero_uid13_fpToFxPTest(LOGICAL,12)@1
+    fracXIsZero_uid13_fpToFxPTest_q <= "1" WHEN cstZeroWF_uid7_fpToFxPTest_q = redist1_frac_x_uid10_fpToFxPTest_b_1_q ELSE "0";
 
     -- cstAllOWE_uid6_fpToFxPTest(CONSTANT,5)
     cstAllOWE_uid6_fpToFxPTest_q <= "11111111";
@@ -537,27 +497,22 @@ begin
     GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
     PORT MAP ( xin => expXIsMax_uid12_fpToFxPTest_qi, xout => expXIsMax_uid12_fpToFxPTest_q, clk => clk, aclr => areset );
 
-    -- redist5_expXIsMax_uid12_fpToFxPTest_q_3(DELAY,112)
-    redist5_expXIsMax_uid12_fpToFxPTest_q_3 : dspba_delay
-    GENERIC MAP ( width => 1, depth => 2, reset_kind => "ASYNC" )
-    PORT MAP ( xin => expXIsMax_uid12_fpToFxPTest_q, xout => redist5_expXIsMax_uid12_fpToFxPTest_q_3_q, clk => clk, aclr => areset );
+    -- excI_x_uid15_fpToFxPTest(LOGICAL,14)@1
+    excI_x_uid15_fpToFxPTest_q <= expXIsMax_uid12_fpToFxPTest_q and fracXIsZero_uid13_fpToFxPTest_q;
 
-    -- excI_x_uid15_fpToFxPTest(LOGICAL,14)@3
-    excI_x_uid15_fpToFxPTest_q <= redist5_expXIsMax_uid12_fpToFxPTest_q_3_q and redist4_fracXIsZero_uid13_fpToFxPTest_q_2_q;
+    -- fracXIsNotZero_uid14_fpToFxPTest(LOGICAL,13)@1
+    fracXIsNotZero_uid14_fpToFxPTest_q <= not (fracXIsZero_uid13_fpToFxPTest_q);
 
-    -- fracXIsNotZero_uid14_fpToFxPTest(LOGICAL,13)@3
-    fracXIsNotZero_uid14_fpToFxPTest_q <= not (redist4_fracXIsZero_uid13_fpToFxPTest_q_2_q);
+    -- excN_x_uid16_fpToFxPTest(LOGICAL,15)@1
+    excN_x_uid16_fpToFxPTest_q <= expXIsMax_uid12_fpToFxPTest_q and fracXIsNotZero_uid14_fpToFxPTest_q;
 
-    -- excN_x_uid16_fpToFxPTest(LOGICAL,15)@3
-    excN_x_uid16_fpToFxPTest_q <= redist5_expXIsMax_uid12_fpToFxPTest_q_3_q and fracXIsNotZero_uid14_fpToFxPTest_q;
+    -- ovfPostRnd_uid48_fpToFxPTest(LOGICAL,47)@1
+    ovfPostRnd_uid48_fpToFxPTest_q <= excN_x_uid16_fpToFxPTest_q or excI_x_uid15_fpToFxPTest_q or ovfExpRange_uid27_fpToFxPTest_n or rndOvfPos_uid47_fpToFxPTest_c;
 
-    -- ovfPostRnd_uid48_fpToFxPTest(LOGICAL,47)@3
-    ovfPostRnd_uid48_fpToFxPTest_q <= excN_x_uid16_fpToFxPTest_q or excI_x_uid15_fpToFxPTest_q or redist1_ovfExpRange_uid27_fpToFxPTest_n_3_q or rndOvfPos_uid47_fpToFxPTest_c;
+    -- muxSelConc_uid49_fpToFxPTest(BITJOIN,48)@1
+    muxSelConc_uid49_fpToFxPTest_q <= redist0_signX_uid25_fpToFxPTest_b_1_q & udf_uid29_fpToFxPTest_n & ovfPostRnd_uid48_fpToFxPTest_q;
 
-    -- muxSelConc_uid49_fpToFxPTest(BITJOIN,48)@3
-    muxSelConc_uid49_fpToFxPTest_q <= redist3_signX_uid25_fpToFxPTest_b_3_q & redist0_udf_uid29_fpToFxPTest_n_3_q & ovfPostRnd_uid48_fpToFxPTest_q;
-
-    -- muxSel_uid50_fpToFxPTest(LOOKUP,49)@3
+    -- muxSel_uid50_fpToFxPTest(LOOKUP,49)@1
     muxSel_uid50_fpToFxPTest_combproc: PROCESS (muxSelConc_uid49_fpToFxPTest_q)
     BEGIN
         -- Begin reserved scope level
@@ -579,7 +534,7 @@ begin
     -- VCC(CONSTANT,1)
     VCC_q <= "1";
 
-    -- finalOut_uid52_fpToFxPTest(MUX,51)@3
+    -- finalOut_uid52_fpToFxPTest(MUX,51)@1
     finalOut_uid52_fpToFxPTest_s <= muxSel_uid50_fpToFxPTest_q;
     finalOut_uid52_fpToFxPTest_combproc: PROCESS (finalOut_uid52_fpToFxPTest_s, sPostRnd_uid45_fpToFxPTest_b, maxPosValueS_uid39_fpToFxPTest_q, maxNegValueS_uid40_fpToFxPTest_q, maxNegValueU_uid51_fpToFxPTest_q)
     BEGIN
@@ -592,7 +547,7 @@ begin
         END CASE;
     END PROCESS;
 
-    -- xOut(GPOUT,4)@3
+    -- xOut(GPOUT,4)@1
     q <= finalOut_uid52_fpToFxPTest_q;
 
 END normal;

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<simPackage>
+ <file
+   path="fp_inv_sim/fp_inv_memoryC0_uid60_inverseTables_lutmem.hex"
+   type="HEX" />
+ <file
+   path="fp_inv_sim/fp_inv_memoryC1_uid63_inverseTables_lutmem.hex"
+   type="HEX" />
+ <file
+   path="fp_inv_sim/fp_inv_memoryC2_uid66_inverseTables_lutmem.hex"
+   type="HEX" />
+ <file path="fp_inv_sim/fp_inv.vo" type="VERILOG" />
+ <topLevel name="fp_inv" />
+ <deviceFamily name="max10" />
+</simPackage>

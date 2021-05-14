@@ -14,6 +14,8 @@ module fp_dot (
 		input  wire [31:0] b1,     //     b1.b1
 		input  wire [31:0] a2,     //     a2.a2
 		input  wire [31:0] b2,     //     b2.b2
+		input  wire [31:0] a3,     //     a3.a3
+		input  wire [31:0] b3,     //     b3.b3
 		output wire [31:0] q       //      q.q
 	);
 
@@ -26,6 +28,8 @@ module fp_dot (
 		.b1     (b1),     //     b1.b1
 		.a2     (a2),     //     a2.a2
 		.b2     (b2),     //     b2.b2
+		.a3     (a3),     //     a3.a3
+		.b3     (b3),     //     b3.b3
 		.q      (q)       //      q.q
 	);
 
@@ -78,7 +82,7 @@ endmodule
 // Retrieval info: 	<generic name="divide_type" value="0" />
 // Retrieval info: 	<generic name="select_signal_enable" value="false" />
 // Retrieval info: 	<generic name="scale_by_pi" value="false" />
-// Retrieval info: 	<generic name="number_of_inputs" value="3" />
+// Retrieval info: 	<generic name="number_of_inputs" value="4" />
 // Retrieval info: 	<generic name="trig_no_range_reduction" value="false" />
 // Retrieval info: 	<generic name="report_resources_to_xml" value="false" />
 // Retrieval info: 	<generic name="fxpt_width" value="32" />

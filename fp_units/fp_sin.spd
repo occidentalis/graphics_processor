@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<simPackage>
+ <file
+   path="fp_sin_sim/fp_sin_memoryC0_uid155_sinPiXTables_lutmem.hex"
+   type="HEX" />
+ <file
+   path="fp_sin_sim/fp_sin_memoryC1_uid158_sinPiXTables_lutmem.hex"
+   type="HEX" />
+ <file
+   path="fp_sin_sim/fp_sin_memoryC2_uid161_sinPiXTables_lutmem.hex"
+   type="HEX" />
+ <file path="fp_sin_sim/fp_sin.vo" type="VERILOG" />
+ <topLevel name="fp_sin" />
+ <deviceFamily name="max10" />
+</simPackage>

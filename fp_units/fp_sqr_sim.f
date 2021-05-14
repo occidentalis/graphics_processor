@@ -1,4 +1,0 @@
-fp_sqr_sim/fp_sqr_memoryC0_uid62_sqrtTables_lutmem.hex
-fp_sqr_sim/fp_sqr_memoryC1_uid65_sqrtTables_lutmem.hex
-fp_sqr_sim/fp_sqr_memoryC2_uid68_sqrtTables_lutmem.hex
-fp_sqr_sim/fp_sqr.vo

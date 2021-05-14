@@ -1,0 +1,4 @@
+fp_cos_sim/fp_cos_memoryC0_uid144_cosPiXTables_lutmem.hex
+fp_cos_sim/fp_cos_memoryC1_uid147_cosPiXTables_lutmem.hex
+fp_cos_sim/fp_cos_memoryC2_uid150_cosPiXTables_lutmem.hex
+fp_cos_sim/fp_cos.vo

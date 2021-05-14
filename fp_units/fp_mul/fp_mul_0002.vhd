@@ -16,7 +16,7 @@
 -- ---------------------------------------------------------------------------
 
 -- VHDL created from fp_mul_0002
--- VHDL created on Sat May 01 22:10:33 2021
+-- VHDL created on Tue May 11 07:20:41 2021
 
 
 library IEEE;
@@ -142,6 +142,7 @@ architecture normal of fp_mul_0002 is
     signal expRPostExc_uid89_fpMulTest_s : STD_LOGIC_VECTOR (1 downto 0);
     signal expRPostExc_uid89_fpMulTest_q : STD_LOGIC_VECTOR (7 downto 0);
     signal invExcRNaN_uid90_fpMulTest_q : STD_LOGIC_VECTOR (0 downto 0);
+    signal signRPostExc_uid91_fpMulTest_qi : STD_LOGIC_VECTOR (0 downto 0);
     signal signRPostExc_uid91_fpMulTest_q : STD_LOGIC_VECTOR (0 downto 0);
     signal R_uid92_fpMulTest_q : STD_LOGIC_VECTOR (31 downto 0);
     signal topRangeX_uid102_prod_uid47_fpMulTest_b : STD_LOGIC_VECTOR (17 downto 0);
@@ -224,20 +225,16 @@ architecture normal of fp_mul_0002 is
     signal lowRangeA_uid166_prod_uid47_fpMulTest_merged_bit_select_c : STD_LOGIC_VECTOR (12 downto 0);
     signal lowRangeA_uid171_prod_uid47_fpMulTest_merged_bit_select_b : STD_LOGIC_VECTOR (4 downto 0);
     signal lowRangeA_uid171_prod_uid47_fpMulTest_merged_bit_select_c : STD_LOGIC_VECTOR (32 downto 0);
-    signal redist0_lowRangeA_uid166_prod_uid47_fpMulTest_merged_bit_select_b_1_q : STD_LOGIC_VECTOR (4 downto 0);
-    signal redist1_osig_uid175_prod_uid47_fpMulTest_b_1_q : STD_LOGIC_VECTOR (26 downto 0);
-    signal redist2_n0_uid149_prod_uid47_fpMulTest_b_1_q : STD_LOGIC_VECTOR (1 downto 0);
-    signal redist3_n1_uid148_prod_uid47_fpMulTest_b_1_q : STD_LOGIC_VECTOR (1 downto 0);
-    signal redist4_expRPreExcExt_uid60_fpMulTest_b_1_q : STD_LOGIC_VECTOR (11 downto 0);
-    signal redist5_fracRPreExc_uid59_fpMulTest_b_1_q : STD_LOGIC_VECTOR (22 downto 0);
-    signal redist6_signR_uid48_fpMulTest_q_5_q : STD_LOGIC_VECTOR (0 downto 0);
-    signal redist7_expSum_uid44_fpMulTest_q_4_q : STD_LOGIC_VECTOR (8 downto 0);
-    signal redist8_fracXIsZero_uid31_fpMulTest_q_5_q : STD_LOGIC_VECTOR (0 downto 0);
-    signal redist9_expXIsMax_uid30_fpMulTest_q_5_q : STD_LOGIC_VECTOR (0 downto 0);
-    signal redist10_excZ_y_uid29_fpMulTest_q_5_q : STD_LOGIC_VECTOR (0 downto 0);
-    signal redist11_fracXIsZero_uid17_fpMulTest_q_5_q : STD_LOGIC_VECTOR (0 downto 0);
-    signal redist12_expXIsMax_uid16_fpMulTest_q_5_q : STD_LOGIC_VECTOR (0 downto 0);
-    signal redist13_excZ_x_uid15_fpMulTest_q_5_q : STD_LOGIC_VECTOR (0 downto 0);
+    signal redist0_expRPreExc_uid61_fpMulTest_b_1_q : STD_LOGIC_VECTOR (7 downto 0);
+    signal redist1_fracRPreExc_uid59_fpMulTest_b_1_q : STD_LOGIC_VECTOR (22 downto 0);
+    signal redist2_signR_uid48_fpMulTest_q_2_q : STD_LOGIC_VECTOR (0 downto 0);
+    signal redist3_expSum_uid44_fpMulTest_q_2_q : STD_LOGIC_VECTOR (8 downto 0);
+    signal redist4_fracXIsZero_uid31_fpMulTest_q_2_q : STD_LOGIC_VECTOR (0 downto 0);
+    signal redist5_expXIsMax_uid30_fpMulTest_q_2_q : STD_LOGIC_VECTOR (0 downto 0);
+    signal redist6_excZ_y_uid29_fpMulTest_q_2_q : STD_LOGIC_VECTOR (0 downto 0);
+    signal redist7_fracXIsZero_uid17_fpMulTest_q_2_q : STD_LOGIC_VECTOR (0 downto 0);
+    signal redist8_expXIsMax_uid16_fpMulTest_q_2_q : STD_LOGIC_VECTOR (0 downto 0);
+    signal redist9_excZ_x_uid15_fpMulTest_q_2_q : STD_LOGIC_VECTOR (0 downto 0);
 
 begin
 
@@ -254,10 +251,10 @@ begin
     GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
     PORT MAP ( xin => fracXIsZero_uid17_fpMulTest_qi, xout => fracXIsZero_uid17_fpMulTest_q, clk => clk, aclr => areset );
 
-    -- redist11_fracXIsZero_uid17_fpMulTest_q_5(DELAY,189)
-    redist11_fracXIsZero_uid17_fpMulTest_q_5 : dspba_delay
-    GENERIC MAP ( width => 1, depth => 4, reset_kind => "ASYNC" )
-    PORT MAP ( xin => fracXIsZero_uid17_fpMulTest_q, xout => redist11_fracXIsZero_uid17_fpMulTest_q_5_q, clk => clk, aclr => areset );
+    -- redist7_fracXIsZero_uid17_fpMulTest_q_2(DELAY,185)
+    redist7_fracXIsZero_uid17_fpMulTest_q_2 : dspba_delay
+    GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
+    PORT MAP ( xin => fracXIsZero_uid17_fpMulTest_q, xout => redist7_fracXIsZero_uid17_fpMulTest_q_2_q, clk => clk, aclr => areset );
 
     -- cstAllOWE_uid10_fpMulTest(CONSTANT,9)
     cstAllOWE_uid10_fpMulTest_q <= "11111111";
@@ -271,13 +268,13 @@ begin
     GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
     PORT MAP ( xin => expXIsMax_uid16_fpMulTest_qi, xout => expXIsMax_uid16_fpMulTest_q, clk => clk, aclr => areset );
 
-    -- redist12_expXIsMax_uid16_fpMulTest_q_5(DELAY,190)
-    redist12_expXIsMax_uid16_fpMulTest_q_5 : dspba_delay
-    GENERIC MAP ( width => 1, depth => 4, reset_kind => "ASYNC" )
-    PORT MAP ( xin => expXIsMax_uid16_fpMulTest_q, xout => redist12_expXIsMax_uid16_fpMulTest_q_5_q, clk => clk, aclr => areset );
+    -- redist8_expXIsMax_uid16_fpMulTest_q_2(DELAY,186)
+    redist8_expXIsMax_uid16_fpMulTest_q_2 : dspba_delay
+    GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
+    PORT MAP ( xin => expXIsMax_uid16_fpMulTest_q, xout => redist8_expXIsMax_uid16_fpMulTest_q_2_q, clk => clk, aclr => areset );
 
-    -- excI_x_uid19_fpMulTest(LOGICAL,18)@5
-    excI_x_uid19_fpMulTest_q <= redist12_expXIsMax_uid16_fpMulTest_q_5_q and redist11_fracXIsZero_uid17_fpMulTest_q_5_q;
+    -- excI_x_uid19_fpMulTest(LOGICAL,18)@2
+    excI_x_uid19_fpMulTest_q <= redist8_expXIsMax_uid16_fpMulTest_q_2_q and redist7_fracXIsZero_uid17_fpMulTest_q_2_q;
 
     -- cstAllZWE_uid12_fpMulTest(CONSTANT,11)
     cstAllZWE_uid12_fpMulTest_q <= "00000000";
@@ -291,13 +288,13 @@ begin
     GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
     PORT MAP ( xin => excZ_y_uid29_fpMulTest_qi, xout => excZ_y_uid29_fpMulTest_q, clk => clk, aclr => areset );
 
-    -- redist10_excZ_y_uid29_fpMulTest_q_5(DELAY,188)
-    redist10_excZ_y_uid29_fpMulTest_q_5 : dspba_delay
-    GENERIC MAP ( width => 1, depth => 4, reset_kind => "ASYNC" )
-    PORT MAP ( xin => excZ_y_uid29_fpMulTest_q, xout => redist10_excZ_y_uid29_fpMulTest_q_5_q, clk => clk, aclr => areset );
+    -- redist6_excZ_y_uid29_fpMulTest_q_2(DELAY,184)
+    redist6_excZ_y_uid29_fpMulTest_q_2 : dspba_delay
+    GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
+    PORT MAP ( xin => excZ_y_uid29_fpMulTest_q, xout => redist6_excZ_y_uid29_fpMulTest_q_2_q, clk => clk, aclr => areset );
 
-    -- excYZAndExcXI_uid75_fpMulTest(LOGICAL,74)@5
-    excYZAndExcXI_uid75_fpMulTest_q <= redist10_excZ_y_uid29_fpMulTest_q_5_q and excI_x_uid19_fpMulTest_q;
+    -- excYZAndExcXI_uid75_fpMulTest(LOGICAL,74)@2
+    excYZAndExcXI_uid75_fpMulTest_q <= redist6_excZ_y_uid29_fpMulTest_q_2_q and excI_x_uid19_fpMulTest_q;
 
     -- frac_y_uid28_fpMulTest(BITSELECT,27)@0
     frac_y_uid28_fpMulTest_b <= b(22 downto 0);
@@ -308,10 +305,10 @@ begin
     GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
     PORT MAP ( xin => fracXIsZero_uid31_fpMulTest_qi, xout => fracXIsZero_uid31_fpMulTest_q, clk => clk, aclr => areset );
 
-    -- redist8_fracXIsZero_uid31_fpMulTest_q_5(DELAY,186)
-    redist8_fracXIsZero_uid31_fpMulTest_q_5 : dspba_delay
-    GENERIC MAP ( width => 1, depth => 4, reset_kind => "ASYNC" )
-    PORT MAP ( xin => fracXIsZero_uid31_fpMulTest_q, xout => redist8_fracXIsZero_uid31_fpMulTest_q_5_q, clk => clk, aclr => areset );
+    -- redist4_fracXIsZero_uid31_fpMulTest_q_2(DELAY,182)
+    redist4_fracXIsZero_uid31_fpMulTest_q_2 : dspba_delay
+    GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
+    PORT MAP ( xin => fracXIsZero_uid31_fpMulTest_q, xout => redist4_fracXIsZero_uid31_fpMulTest_q_2_q, clk => clk, aclr => areset );
 
     -- expXIsMax_uid30_fpMulTest(LOGICAL,29)@0 + 1
     expXIsMax_uid30_fpMulTest_qi <= "1" WHEN expY_uid7_fpMulTest_b = cstAllOWE_uid10_fpMulTest_q ELSE "0";
@@ -319,13 +316,13 @@ begin
     GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
     PORT MAP ( xin => expXIsMax_uid30_fpMulTest_qi, xout => expXIsMax_uid30_fpMulTest_q, clk => clk, aclr => areset );
 
-    -- redist9_expXIsMax_uid30_fpMulTest_q_5(DELAY,187)
-    redist9_expXIsMax_uid30_fpMulTest_q_5 : dspba_delay
-    GENERIC MAP ( width => 1, depth => 4, reset_kind => "ASYNC" )
-    PORT MAP ( xin => expXIsMax_uid30_fpMulTest_q, xout => redist9_expXIsMax_uid30_fpMulTest_q_5_q, clk => clk, aclr => areset );
+    -- redist5_expXIsMax_uid30_fpMulTest_q_2(DELAY,183)
+    redist5_expXIsMax_uid30_fpMulTest_q_2 : dspba_delay
+    GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
+    PORT MAP ( xin => expXIsMax_uid30_fpMulTest_q, xout => redist5_expXIsMax_uid30_fpMulTest_q_2_q, clk => clk, aclr => areset );
 
-    -- excI_y_uid33_fpMulTest(LOGICAL,32)@5
-    excI_y_uid33_fpMulTest_q <= redist9_expXIsMax_uid30_fpMulTest_q_5_q and redist8_fracXIsZero_uid31_fpMulTest_q_5_q;
+    -- excI_y_uid33_fpMulTest(LOGICAL,32)@2
+    excI_y_uid33_fpMulTest_q <= redist5_expXIsMax_uid30_fpMulTest_q_2_q and redist4_fracXIsZero_uid31_fpMulTest_q_2_q;
 
     -- excZ_x_uid15_fpMulTest(LOGICAL,14)@0 + 1
     excZ_x_uid15_fpMulTest_qi <= "1" WHEN expX_uid6_fpMulTest_b = cstAllZWE_uid12_fpMulTest_q ELSE "0";
@@ -333,33 +330,33 @@ begin
     GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
     PORT MAP ( xin => excZ_x_uid15_fpMulTest_qi, xout => excZ_x_uid15_fpMulTest_q, clk => clk, aclr => areset );
 
-    -- redist13_excZ_x_uid15_fpMulTest_q_5(DELAY,191)
-    redist13_excZ_x_uid15_fpMulTest_q_5 : dspba_delay
-    GENERIC MAP ( width => 1, depth => 4, reset_kind => "ASYNC" )
-    PORT MAP ( xin => excZ_x_uid15_fpMulTest_q, xout => redist13_excZ_x_uid15_fpMulTest_q_5_q, clk => clk, aclr => areset );
+    -- redist9_excZ_x_uid15_fpMulTest_q_2(DELAY,187)
+    redist9_excZ_x_uid15_fpMulTest_q_2 : dspba_delay
+    GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
+    PORT MAP ( xin => excZ_x_uid15_fpMulTest_q, xout => redist9_excZ_x_uid15_fpMulTest_q_2_q, clk => clk, aclr => areset );
 
-    -- excXZAndExcYI_uid76_fpMulTest(LOGICAL,75)@5
-    excXZAndExcYI_uid76_fpMulTest_q <= redist13_excZ_x_uid15_fpMulTest_q_5_q and excI_y_uid33_fpMulTest_q;
+    -- excXZAndExcYI_uid76_fpMulTest(LOGICAL,75)@2
+    excXZAndExcYI_uid76_fpMulTest_q <= redist9_excZ_x_uid15_fpMulTest_q_2_q and excI_y_uid33_fpMulTest_q;
 
-    -- ZeroTimesInf_uid77_fpMulTest(LOGICAL,76)@5
+    -- ZeroTimesInf_uid77_fpMulTest(LOGICAL,76)@2
     ZeroTimesInf_uid77_fpMulTest_q <= excXZAndExcYI_uid76_fpMulTest_q or excYZAndExcXI_uid75_fpMulTest_q;
 
-    -- fracXIsNotZero_uid32_fpMulTest(LOGICAL,31)@5
-    fracXIsNotZero_uid32_fpMulTest_q <= not (redist8_fracXIsZero_uid31_fpMulTest_q_5_q);
+    -- fracXIsNotZero_uid32_fpMulTest(LOGICAL,31)@2
+    fracXIsNotZero_uid32_fpMulTest_q <= not (redist4_fracXIsZero_uid31_fpMulTest_q_2_q);
 
-    -- excN_y_uid34_fpMulTest(LOGICAL,33)@5
-    excN_y_uid34_fpMulTest_q <= redist9_expXIsMax_uid30_fpMulTest_q_5_q and fracXIsNotZero_uid32_fpMulTest_q;
+    -- excN_y_uid34_fpMulTest(LOGICAL,33)@2
+    excN_y_uid34_fpMulTest_q <= redist5_expXIsMax_uid30_fpMulTest_q_2_q and fracXIsNotZero_uid32_fpMulTest_q;
 
-    -- fracXIsNotZero_uid18_fpMulTest(LOGICAL,17)@5
-    fracXIsNotZero_uid18_fpMulTest_q <= not (redist11_fracXIsZero_uid17_fpMulTest_q_5_q);
+    -- fracXIsNotZero_uid18_fpMulTest(LOGICAL,17)@2
+    fracXIsNotZero_uid18_fpMulTest_q <= not (redist7_fracXIsZero_uid17_fpMulTest_q_2_q);
 
-    -- excN_x_uid20_fpMulTest(LOGICAL,19)@5
-    excN_x_uid20_fpMulTest_q <= redist12_expXIsMax_uid16_fpMulTest_q_5_q and fracXIsNotZero_uid18_fpMulTest_q;
+    -- excN_x_uid20_fpMulTest(LOGICAL,19)@2
+    excN_x_uid20_fpMulTest_q <= redist8_expXIsMax_uid16_fpMulTest_q_2_q and fracXIsNotZero_uid18_fpMulTest_q;
 
-    -- excRNaN_uid78_fpMulTest(LOGICAL,77)@5
+    -- excRNaN_uid78_fpMulTest(LOGICAL,77)@2
     excRNaN_uid78_fpMulTest_q <= excN_x_uid20_fpMulTest_q or excN_y_uid34_fpMulTest_q or ZeroTimesInf_uid77_fpMulTest_q;
 
-    -- invExcRNaN_uid90_fpMulTest(LOGICAL,89)@5
+    -- invExcRNaN_uid90_fpMulTest(LOGICAL,89)@2
     invExcRNaN_uid90_fpMulTest_q <= not (excRNaN_uid78_fpMulTest_q);
 
     -- signY_uid9_fpMulTest(BITSELECT,8)@0
@@ -374,16 +371,19 @@ begin
     GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
     PORT MAP ( xin => signR_uid48_fpMulTest_qi, xout => signR_uid48_fpMulTest_q, clk => clk, aclr => areset );
 
-    -- redist6_signR_uid48_fpMulTest_q_5(DELAY,184)
-    redist6_signR_uid48_fpMulTest_q_5 : dspba_delay
-    GENERIC MAP ( width => 1, depth => 4, reset_kind => "ASYNC" )
-    PORT MAP ( xin => signR_uid48_fpMulTest_q, xout => redist6_signR_uid48_fpMulTest_q_5_q, clk => clk, aclr => areset );
+    -- redist2_signR_uid48_fpMulTest_q_2(DELAY,180)
+    redist2_signR_uid48_fpMulTest_q_2 : dspba_delay
+    GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
+    PORT MAP ( xin => signR_uid48_fpMulTest_q, xout => redist2_signR_uid48_fpMulTest_q_2_q, clk => clk, aclr => areset );
 
     -- VCC(CONSTANT,1)
     VCC_q <= "1";
 
-    -- signRPostExc_uid91_fpMulTest(LOGICAL,90)@5
-    signRPostExc_uid91_fpMulTest_q <= redist6_signR_uid48_fpMulTest_q_5_q and invExcRNaN_uid90_fpMulTest_q;
+    -- signRPostExc_uid91_fpMulTest(LOGICAL,90)@2 + 1
+    signRPostExc_uid91_fpMulTest_qi <= redist2_signR_uid48_fpMulTest_q_2_q and invExcRNaN_uid90_fpMulTest_q;
+    signRPostExc_uid91_fpMulTest_delay : dspba_delay
+    GENERIC MAP ( width => 1, depth => 1, reset_kind => "ASYNC" )
+    PORT MAP ( xin => signRPostExc_uid91_fpMulTest_qi, xout => signRPostExc_uid91_fpMulTest_q, clk => clk, aclr => areset );
 
     -- GND(CONSTANT,0)
     GND_q <= "0";
@@ -404,11 +404,6 @@ begin
     -- n1_uid148_prod_uid47_fpMulTest(BITSELECT,147)@0
     n1_uid148_prod_uid47_fpMulTest_b <= n1_uid140_prod_uid47_fpMulTest_b(2 downto 1);
 
-    -- redist3_n1_uid148_prod_uid47_fpMulTest_b_1(DELAY,181)
-    redist3_n1_uid148_prod_uid47_fpMulTest_b_1 : dspba_delay
-    GENERIC MAP ( width => 2, depth => 1, reset_kind => "ASYNC" )
-    PORT MAP ( xin => n1_uid148_prod_uid47_fpMulTest_b, xout => redist3_n1_uid148_prod_uid47_fpMulTest_b_1_q, clk => clk, aclr => areset );
-
     -- ofracX_uid40_fpMulTest(BITJOIN,39)@0
     ofracX_uid40_fpMulTest_q <= VCC_q & frac_x_uid14_fpMulTest_b;
 
@@ -425,14 +420,9 @@ begin
     -- n0_uid149_prod_uid47_fpMulTest(BITSELECT,148)@0
     n0_uid149_prod_uid47_fpMulTest_b <= n0_uid141_prod_uid47_fpMulTest_b(2 downto 1);
 
-    -- redist2_n0_uid149_prod_uid47_fpMulTest_b_1(DELAY,180)
-    redist2_n0_uid149_prod_uid47_fpMulTest_b_1 : dspba_delay
-    GENERIC MAP ( width => 2, depth => 1, reset_kind => "ASYNC" )
-    PORT MAP ( xin => n0_uid149_prod_uid47_fpMulTest_b, xout => redist2_n0_uid149_prod_uid47_fpMulTest_b_1_q, clk => clk, aclr => areset );
-
-    -- sm1_uid164_prod_uid47_fpMulTest(MULT,163)@1 + 2
-    sm1_uid164_prod_uid47_fpMulTest_a0 <= redist2_n0_uid149_prod_uid47_fpMulTest_b_1_q;
-    sm1_uid164_prod_uid47_fpMulTest_b0 <= redist3_n1_uid148_prod_uid47_fpMulTest_b_1_q;
+    -- sm1_uid164_prod_uid47_fpMulTest(MULT,163)@0 + 2
+    sm1_uid164_prod_uid47_fpMulTest_a0 <= n0_uid149_prod_uid47_fpMulTest_b;
+    sm1_uid164_prod_uid47_fpMulTest_b0 <= n1_uid148_prod_uid47_fpMulTest_b;
     sm1_uid164_prod_uid47_fpMulTest_reset <= areset;
     sm1_uid164_prod_uid47_fpMulTest_component : lpm_mult
     GENERIC MAP (
@@ -455,7 +445,7 @@ begin
     );
     sm1_uid164_prod_uid47_fpMulTest_q <= sm1_uid164_prod_uid47_fpMulTest_s1;
 
-    -- lev3_a0high_uid173_prod_uid47_fpMulTest(ADD,172)@3
+    -- lev3_a0high_uid173_prod_uid47_fpMulTest(ADD,172)@2
     lev3_a0high_uid173_prod_uid47_fpMulTest_a <= STD_LOGIC_VECTOR("0" & lowRangeA_uid171_prod_uid47_fpMulTest_merged_bit_select_c);
     lev3_a0high_uid173_prod_uid47_fpMulTest_b <= STD_LOGIC_VECTOR("000000000000000000000000000000" & sm1_uid164_prod_uid47_fpMulTest_q);
     lev3_a0high_uid173_prod_uid47_fpMulTest_o <= STD_LOGIC_VECTOR(UNSIGNED(lev3_a0high_uid173_prod_uid47_fpMulTest_a) + UNSIGNED(lev3_a0high_uid173_prod_uid47_fpMulTest_b));
@@ -512,6 +502,12 @@ begin
     );
     sm0_uid163_prod_uid47_fpMulTest_q <= sm0_uid163_prod_uid47_fpMulTest_s1;
 
+    -- lev1_a1high_uid168_prod_uid47_fpMulTest(ADD,167)@2
+    lev1_a1high_uid168_prod_uid47_fpMulTest_a <= STD_LOGIC_VECTOR("0" & lowRangeA_uid166_prod_uid47_fpMulTest_merged_bit_select_c);
+    lev1_a1high_uid168_prod_uid47_fpMulTest_b <= STD_LOGIC_VECTOR("0000000000" & sm0_uid163_prod_uid47_fpMulTest_q);
+    lev1_a1high_uid168_prod_uid47_fpMulTest_o <= STD_LOGIC_VECTOR(UNSIGNED(lev1_a1high_uid168_prod_uid47_fpMulTest_a) + UNSIGNED(lev1_a1high_uid168_prod_uid47_fpMulTest_b));
+    lev1_a1high_uid168_prod_uid47_fpMulTest_q <= lev1_a1high_uid168_prod_uid47_fpMulTest_o(13 downto 0);
+
     -- rightBottomY_uid117_prod_uid47_fpMulTest(BITSELECT,116)@0
     rightBottomY_uid117_prod_uid47_fpMulTest_b <= ofracY_uid43_fpMulTest_q(23 downto 15);
 
@@ -554,26 +550,8 @@ begin
     lowRangeA_uid166_prod_uid47_fpMulTest_merged_bit_select_b <= sm1_uid162_prod_uid47_fpMulTest_q(4 downto 0);
     lowRangeA_uid166_prod_uid47_fpMulTest_merged_bit_select_c <= sm1_uid162_prod_uid47_fpMulTest_q(17 downto 5);
 
-    -- lev1_a1high_uid168_prod_uid47_fpMulTest(ADD,167)@2 + 1
-    lev1_a1high_uid168_prod_uid47_fpMulTest_a <= STD_LOGIC_VECTOR("0" & lowRangeA_uid166_prod_uid47_fpMulTest_merged_bit_select_c);
-    lev1_a1high_uid168_prod_uid47_fpMulTest_b <= STD_LOGIC_VECTOR("0000000000" & sm0_uid163_prod_uid47_fpMulTest_q);
-    lev1_a1high_uid168_prod_uid47_fpMulTest_clkproc: PROCESS (clk, areset)
-    BEGIN
-        IF (areset = '1') THEN
-            lev1_a1high_uid168_prod_uid47_fpMulTest_o <= (others => '0');
-        ELSIF (clk'EVENT AND clk = '1') THEN
-            lev1_a1high_uid168_prod_uid47_fpMulTest_o <= STD_LOGIC_VECTOR(UNSIGNED(lev1_a1high_uid168_prod_uid47_fpMulTest_a) + UNSIGNED(lev1_a1high_uid168_prod_uid47_fpMulTest_b));
-        END IF;
-    END PROCESS;
-    lev1_a1high_uid168_prod_uid47_fpMulTest_q <= lev1_a1high_uid168_prod_uid47_fpMulTest_o(13 downto 0);
-
-    -- redist0_lowRangeA_uid166_prod_uid47_fpMulTest_merged_bit_select_b_1(DELAY,178)
-    redist0_lowRangeA_uid166_prod_uid47_fpMulTest_merged_bit_select_b_1 : dspba_delay
-    GENERIC MAP ( width => 5, depth => 1, reset_kind => "ASYNC" )
-    PORT MAP ( xin => lowRangeA_uid166_prod_uid47_fpMulTest_merged_bit_select_b, xout => redist0_lowRangeA_uid166_prod_uid47_fpMulTest_merged_bit_select_b_1_q, clk => clk, aclr => areset );
-
-    -- lev1_a1_uid169_prod_uid47_fpMulTest(BITJOIN,168)@3
-    lev1_a1_uid169_prod_uid47_fpMulTest_q <= lev1_a1high_uid168_prod_uid47_fpMulTest_q & redist0_lowRangeA_uid166_prod_uid47_fpMulTest_merged_bit_select_b_1_q;
+    -- lev1_a1_uid169_prod_uid47_fpMulTest(BITJOIN,168)@2
+    lev1_a1_uid169_prod_uid47_fpMulTest_q <= lev1_a1high_uid168_prod_uid47_fpMulTest_q & lowRangeA_uid166_prod_uid47_fpMulTest_merged_bit_select_b;
 
     -- aboveLeftY_bottomRange_uid110_prod_uid47_fpMulTest(BITSELECT,109)@0
     aboveLeftY_bottomRange_uid110_prod_uid47_fpMulTest_in <= ofracY_uid43_fpMulTest_q(5 downto 0);
@@ -641,45 +619,33 @@ begin
     );
     sm0_uid160_prod_uid47_fpMulTest_q <= sm0_uid160_prod_uid47_fpMulTest_s1;
 
-    -- lev1_a0_uid165_prod_uid47_fpMulTest(ADD,164)@2 + 1
+    -- lev1_a0_uid165_prod_uid47_fpMulTest(ADD,164)@2
     lev1_a0_uid165_prod_uid47_fpMulTest_a <= STD_LOGIC_VECTOR("0" & sm0_uid160_prod_uid47_fpMulTest_q);
     lev1_a0_uid165_prod_uid47_fpMulTest_b <= STD_LOGIC_VECTOR("0000000000000000000" & sm0_uid161_prod_uid47_fpMulTest_q);
-    lev1_a0_uid165_prod_uid47_fpMulTest_clkproc: PROCESS (clk, areset)
-    BEGIN
-        IF (areset = '1') THEN
-            lev1_a0_uid165_prod_uid47_fpMulTest_o <= (others => '0');
-        ELSIF (clk'EVENT AND clk = '1') THEN
-            lev1_a0_uid165_prod_uid47_fpMulTest_o <= STD_LOGIC_VECTOR(UNSIGNED(lev1_a0_uid165_prod_uid47_fpMulTest_a) + UNSIGNED(lev1_a0_uid165_prod_uid47_fpMulTest_b));
-        END IF;
-    END PROCESS;
+    lev1_a0_uid165_prod_uid47_fpMulTest_o <= STD_LOGIC_VECTOR(UNSIGNED(lev1_a0_uid165_prod_uid47_fpMulTest_a) + UNSIGNED(lev1_a0_uid165_prod_uid47_fpMulTest_b));
     lev1_a0_uid165_prod_uid47_fpMulTest_q <= lev1_a0_uid165_prod_uid47_fpMulTest_o(36 downto 0);
 
-    -- lev2_a0_uid170_prod_uid47_fpMulTest(ADD,169)@3
+    -- lev2_a0_uid170_prod_uid47_fpMulTest(ADD,169)@2
     lev2_a0_uid170_prod_uid47_fpMulTest_a <= STD_LOGIC_VECTOR("0" & lev1_a0_uid165_prod_uid47_fpMulTest_q);
     lev2_a0_uid170_prod_uid47_fpMulTest_b <= STD_LOGIC_VECTOR("0000000000000000000" & lev1_a1_uid169_prod_uid47_fpMulTest_q);
     lev2_a0_uid170_prod_uid47_fpMulTest_o <= STD_LOGIC_VECTOR(UNSIGNED(lev2_a0_uid170_prod_uid47_fpMulTest_a) + UNSIGNED(lev2_a0_uid170_prod_uid47_fpMulTest_b));
     lev2_a0_uid170_prod_uid47_fpMulTest_q <= lev2_a0_uid170_prod_uid47_fpMulTest_o(37 downto 0);
 
-    -- lowRangeA_uid171_prod_uid47_fpMulTest_merged_bit_select(BITSELECT,177)@3
+    -- lowRangeA_uid171_prod_uid47_fpMulTest_merged_bit_select(BITSELECT,177)@2
     lowRangeA_uid171_prod_uid47_fpMulTest_merged_bit_select_b <= lev2_a0_uid170_prod_uid47_fpMulTest_q(4 downto 0);
     lowRangeA_uid171_prod_uid47_fpMulTest_merged_bit_select_c <= lev2_a0_uid170_prod_uid47_fpMulTest_q(37 downto 5);
 
-    -- lev3_a0_uid174_prod_uid47_fpMulTest(BITJOIN,173)@3
+    -- lev3_a0_uid174_prod_uid47_fpMulTest(BITJOIN,173)@2
     lev3_a0_uid174_prod_uid47_fpMulTest_q <= lev3_a0high_uid173_prod_uid47_fpMulTest_q & lowRangeA_uid171_prod_uid47_fpMulTest_merged_bit_select_b;
 
-    -- osig_uid175_prod_uid47_fpMulTest(BITSELECT,174)@3
+    -- osig_uid175_prod_uid47_fpMulTest(BITSELECT,174)@2
     osig_uid175_prod_uid47_fpMulTest_in <= lev3_a0_uid174_prod_uid47_fpMulTest_q(35 downto 0);
     osig_uid175_prod_uid47_fpMulTest_b <= osig_uid175_prod_uid47_fpMulTest_in(35 downto 9);
 
-    -- redist1_osig_uid175_prod_uid47_fpMulTest_b_1(DELAY,179)
-    redist1_osig_uid175_prod_uid47_fpMulTest_b_1 : dspba_delay
-    GENERIC MAP ( width => 27, depth => 1, reset_kind => "ASYNC" )
-    PORT MAP ( xin => osig_uid175_prod_uid47_fpMulTest_b, xout => redist1_osig_uid175_prod_uid47_fpMulTest_b_1_q, clk => clk, aclr => areset );
+    -- normalizeBit_uid49_fpMulTest(BITSELECT,48)@2
+    normalizeBit_uid49_fpMulTest_b <= STD_LOGIC_VECTOR(osig_uid175_prod_uid47_fpMulTest_b(26 downto 26));
 
-    -- normalizeBit_uid49_fpMulTest(BITSELECT,48)@4
-    normalizeBit_uid49_fpMulTest_b <= STD_LOGIC_VECTOR(redist1_osig_uid175_prod_uid47_fpMulTest_b_1_q(26 downto 26));
-
-    -- roundBitAndNormalizationOp_uid57_fpMulTest(BITJOIN,56)@4
+    -- roundBitAndNormalizationOp_uid57_fpMulTest(BITJOIN,56)@2
     roundBitAndNormalizationOp_uid57_fpMulTest_q <= GND_q & normalizeBit_uid49_fpMulTest_b & cstZeroWF_uid11_fpMulTest_q & VCC_q;
 
     -- biasInc_uid45_fpMulTest(CONSTANT,44)
@@ -698,26 +664,26 @@ begin
     END PROCESS;
     expSum_uid44_fpMulTest_q <= expSum_uid44_fpMulTest_o(8 downto 0);
 
-    -- redist7_expSum_uid44_fpMulTest_q_4(DELAY,185)
-    redist7_expSum_uid44_fpMulTest_q_4 : dspba_delay
-    GENERIC MAP ( width => 9, depth => 3, reset_kind => "ASYNC" )
-    PORT MAP ( xin => expSum_uid44_fpMulTest_q, xout => redist7_expSum_uid44_fpMulTest_q_4_q, clk => clk, aclr => areset );
+    -- redist3_expSum_uid44_fpMulTest_q_2(DELAY,181)
+    redist3_expSum_uid44_fpMulTest_q_2 : dspba_delay
+    GENERIC MAP ( width => 9, depth => 1, reset_kind => "ASYNC" )
+    PORT MAP ( xin => expSum_uid44_fpMulTest_q, xout => redist3_expSum_uid44_fpMulTest_q_2_q, clk => clk, aclr => areset );
 
-    -- expSumMBias_uid46_fpMulTest(SUB,45)@4
-    expSumMBias_uid46_fpMulTest_a <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR("000" & redist7_expSum_uid44_fpMulTest_q_4_q));
+    -- expSumMBias_uid46_fpMulTest(SUB,45)@2
+    expSumMBias_uid46_fpMulTest_a <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR("000" & redist3_expSum_uid44_fpMulTest_q_2_q));
     expSumMBias_uid46_fpMulTest_b <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR((11 downto 10 => biasInc_uid45_fpMulTest_q(9)) & biasInc_uid45_fpMulTest_q));
     expSumMBias_uid46_fpMulTest_o <= STD_LOGIC_VECTOR(SIGNED(expSumMBias_uid46_fpMulTest_a) - SIGNED(expSumMBias_uid46_fpMulTest_b));
     expSumMBias_uid46_fpMulTest_q <= expSumMBias_uid46_fpMulTest_o(10 downto 0);
 
-    -- fracRPostNormHigh_uid51_fpMulTest(BITSELECT,50)@4
-    fracRPostNormHigh_uid51_fpMulTest_in <= redist1_osig_uid175_prod_uid47_fpMulTest_b_1_q(25 downto 0);
+    -- fracRPostNormHigh_uid51_fpMulTest(BITSELECT,50)@2
+    fracRPostNormHigh_uid51_fpMulTest_in <= osig_uid175_prod_uid47_fpMulTest_b(25 downto 0);
     fracRPostNormHigh_uid51_fpMulTest_b <= fracRPostNormHigh_uid51_fpMulTest_in(25 downto 2);
 
-    -- fracRPostNormLow_uid52_fpMulTest(BITSELECT,51)@4
-    fracRPostNormLow_uid52_fpMulTest_in <= redist1_osig_uid175_prod_uid47_fpMulTest_b_1_q(24 downto 0);
+    -- fracRPostNormLow_uid52_fpMulTest(BITSELECT,51)@2
+    fracRPostNormLow_uid52_fpMulTest_in <= osig_uid175_prod_uid47_fpMulTest_b(24 downto 0);
     fracRPostNormLow_uid52_fpMulTest_b <= fracRPostNormLow_uid52_fpMulTest_in(24 downto 1);
 
-    -- fracRPostNorm_uid53_fpMulTest(MUX,52)@4
+    -- fracRPostNorm_uid53_fpMulTest(MUX,52)@2
     fracRPostNorm_uid53_fpMulTest_s <= normalizeBit_uid49_fpMulTest_b;
     fracRPostNorm_uid53_fpMulTest_combproc: PROCESS (fracRPostNorm_uid53_fpMulTest_s, fracRPostNormLow_uid52_fpMulTest_b, fracRPostNormHigh_uid51_fpMulTest_b)
     BEGIN
@@ -728,116 +694,118 @@ begin
         END CASE;
     END PROCESS;
 
-    -- expFracPreRound_uid55_fpMulTest(BITJOIN,54)@4
+    -- expFracPreRound_uid55_fpMulTest(BITJOIN,54)@2
     expFracPreRound_uid55_fpMulTest_q <= expSumMBias_uid46_fpMulTest_q & fracRPostNorm_uid53_fpMulTest_q;
 
-    -- expFracRPostRounding_uid58_fpMulTest(ADD,57)@4
+    -- expFracRPostRounding_uid58_fpMulTest(ADD,57)@2
     expFracRPostRounding_uid58_fpMulTest_a <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR((36 downto 35 => expFracPreRound_uid55_fpMulTest_q(34)) & expFracPreRound_uid55_fpMulTest_q));
     expFracRPostRounding_uid58_fpMulTest_b <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR("00000000000" & roundBitAndNormalizationOp_uid57_fpMulTest_q));
     expFracRPostRounding_uid58_fpMulTest_o <= STD_LOGIC_VECTOR(SIGNED(expFracRPostRounding_uid58_fpMulTest_a) + SIGNED(expFracRPostRounding_uid58_fpMulTest_b));
     expFracRPostRounding_uid58_fpMulTest_q <= expFracRPostRounding_uid58_fpMulTest_o(35 downto 0);
 
-    -- expRPreExcExt_uid60_fpMulTest(BITSELECT,59)@4
+    -- expRPreExcExt_uid60_fpMulTest(BITSELECT,59)@2
     expRPreExcExt_uid60_fpMulTest_b <= STD_LOGIC_VECTOR(expFracRPostRounding_uid58_fpMulTest_q(35 downto 24));
 
-    -- redist4_expRPreExcExt_uid60_fpMulTest_b_1(DELAY,182)
-    redist4_expRPreExcExt_uid60_fpMulTest_b_1 : dspba_delay
-    GENERIC MAP ( width => 12, depth => 1, reset_kind => "ASYNC" )
-    PORT MAP ( xin => expRPreExcExt_uid60_fpMulTest_b, xout => redist4_expRPreExcExt_uid60_fpMulTest_b_1_q, clk => clk, aclr => areset );
-
-    -- expRPreExc_uid61_fpMulTest(BITSELECT,60)@5
-    expRPreExc_uid61_fpMulTest_in <= redist4_expRPreExcExt_uid60_fpMulTest_b_1_q(7 downto 0);
+    -- expRPreExc_uid61_fpMulTest(BITSELECT,60)@2
+    expRPreExc_uid61_fpMulTest_in <= expRPreExcExt_uid60_fpMulTest_b(7 downto 0);
     expRPreExc_uid61_fpMulTest_b <= expRPreExc_uid61_fpMulTest_in(7 downto 0);
 
-    -- expOvf_uid64_fpMulTest(COMPARE,63)@5
-    expOvf_uid64_fpMulTest_a <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR((13 downto 12 => redist4_expRPreExcExt_uid60_fpMulTest_b_1_q(11)) & redist4_expRPreExcExt_uid60_fpMulTest_b_1_q));
+    -- redist0_expRPreExc_uid61_fpMulTest_b_1(DELAY,178)
+    redist0_expRPreExc_uid61_fpMulTest_b_1 : dspba_delay
+    GENERIC MAP ( width => 8, depth => 1, reset_kind => "ASYNC" )
+    PORT MAP ( xin => expRPreExc_uid61_fpMulTest_b, xout => redist0_expRPreExc_uid61_fpMulTest_b_1_q, clk => clk, aclr => areset );
+
+    -- expOvf_uid64_fpMulTest(COMPARE,63)@2
+    expOvf_uid64_fpMulTest_a <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR((13 downto 12 => expRPreExcExt_uid60_fpMulTest_b(11)) & expRPreExcExt_uid60_fpMulTest_b));
     expOvf_uid64_fpMulTest_b <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR("000000" & cstAllOWE_uid10_fpMulTest_q));
     expOvf_uid64_fpMulTest_o <= STD_LOGIC_VECTOR(SIGNED(expOvf_uid64_fpMulTest_a) - SIGNED(expOvf_uid64_fpMulTest_b));
     expOvf_uid64_fpMulTest_n(0) <= not (expOvf_uid64_fpMulTest_o(13));
 
-    -- invExpXIsMax_uid35_fpMulTest(LOGICAL,34)@5
-    invExpXIsMax_uid35_fpMulTest_q <= not (redist9_expXIsMax_uid30_fpMulTest_q_5_q);
+    -- invExpXIsMax_uid35_fpMulTest(LOGICAL,34)@2
+    invExpXIsMax_uid35_fpMulTest_q <= not (redist5_expXIsMax_uid30_fpMulTest_q_2_q);
 
-    -- InvExpXIsZero_uid36_fpMulTest(LOGICAL,35)@5
-    InvExpXIsZero_uid36_fpMulTest_q <= not (redist10_excZ_y_uid29_fpMulTest_q_5_q);
+    -- InvExpXIsZero_uid36_fpMulTest(LOGICAL,35)@2
+    InvExpXIsZero_uid36_fpMulTest_q <= not (redist6_excZ_y_uid29_fpMulTest_q_2_q);
 
-    -- excR_y_uid37_fpMulTest(LOGICAL,36)@5
+    -- excR_y_uid37_fpMulTest(LOGICAL,36)@2
     excR_y_uid37_fpMulTest_q <= InvExpXIsZero_uid36_fpMulTest_q and invExpXIsMax_uid35_fpMulTest_q;
 
-    -- invExpXIsMax_uid21_fpMulTest(LOGICAL,20)@5
-    invExpXIsMax_uid21_fpMulTest_q <= not (redist12_expXIsMax_uid16_fpMulTest_q_5_q);
+    -- invExpXIsMax_uid21_fpMulTest(LOGICAL,20)@2
+    invExpXIsMax_uid21_fpMulTest_q <= not (redist8_expXIsMax_uid16_fpMulTest_q_2_q);
 
-    -- InvExpXIsZero_uid22_fpMulTest(LOGICAL,21)@5
-    InvExpXIsZero_uid22_fpMulTest_q <= not (redist13_excZ_x_uid15_fpMulTest_q_5_q);
+    -- InvExpXIsZero_uid22_fpMulTest(LOGICAL,21)@2
+    InvExpXIsZero_uid22_fpMulTest_q <= not (redist9_excZ_x_uid15_fpMulTest_q_2_q);
 
-    -- excR_x_uid23_fpMulTest(LOGICAL,22)@5
+    -- excR_x_uid23_fpMulTest(LOGICAL,22)@2
     excR_x_uid23_fpMulTest_q <= InvExpXIsZero_uid22_fpMulTest_q and invExpXIsMax_uid21_fpMulTest_q;
 
-    -- ExcROvfAndInReg_uid73_fpMulTest(LOGICAL,72)@5
+    -- ExcROvfAndInReg_uid73_fpMulTest(LOGICAL,72)@2
     ExcROvfAndInReg_uid73_fpMulTest_q <= excR_x_uid23_fpMulTest_q and excR_y_uid37_fpMulTest_q and expOvf_uid64_fpMulTest_n;
 
-    -- excYRAndExcXI_uid72_fpMulTest(LOGICAL,71)@5
+    -- excYRAndExcXI_uid72_fpMulTest(LOGICAL,71)@2
     excYRAndExcXI_uid72_fpMulTest_q <= excR_y_uid37_fpMulTest_q and excI_x_uid19_fpMulTest_q;
 
-    -- excXRAndExcYI_uid71_fpMulTest(LOGICAL,70)@5
+    -- excXRAndExcYI_uid71_fpMulTest(LOGICAL,70)@2
     excXRAndExcYI_uid71_fpMulTest_q <= excR_x_uid23_fpMulTest_q and excI_y_uid33_fpMulTest_q;
 
-    -- excXIAndExcYI_uid70_fpMulTest(LOGICAL,69)@5
+    -- excXIAndExcYI_uid70_fpMulTest(LOGICAL,69)@2
     excXIAndExcYI_uid70_fpMulTest_q <= excI_x_uid19_fpMulTest_q and excI_y_uid33_fpMulTest_q;
 
-    -- excRInf_uid74_fpMulTest(LOGICAL,73)@5
+    -- excRInf_uid74_fpMulTest(LOGICAL,73)@2
     excRInf_uid74_fpMulTest_q <= excXIAndExcYI_uid70_fpMulTest_q or excXRAndExcYI_uid71_fpMulTest_q or excYRAndExcXI_uid72_fpMulTest_q or ExcROvfAndInReg_uid73_fpMulTest_q;
 
-    -- expUdf_uid62_fpMulTest(COMPARE,61)@5
+    -- expUdf_uid62_fpMulTest(COMPARE,61)@2
     expUdf_uid62_fpMulTest_a <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR("0000000000000" & GND_q));
-    expUdf_uid62_fpMulTest_b <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR((13 downto 12 => redist4_expRPreExcExt_uid60_fpMulTest_b_1_q(11)) & redist4_expRPreExcExt_uid60_fpMulTest_b_1_q));
+    expUdf_uid62_fpMulTest_b <= STD_LOGIC_VECTOR(STD_LOGIC_VECTOR((13 downto 12 => expRPreExcExt_uid60_fpMulTest_b(11)) & expRPreExcExt_uid60_fpMulTest_b));
     expUdf_uid62_fpMulTest_o <= STD_LOGIC_VECTOR(SIGNED(expUdf_uid62_fpMulTest_a) - SIGNED(expUdf_uid62_fpMulTest_b));
     expUdf_uid62_fpMulTest_n(0) <= not (expUdf_uid62_fpMulTest_o(13));
 
-    -- excZC3_uid68_fpMulTest(LOGICAL,67)@5
+    -- excZC3_uid68_fpMulTest(LOGICAL,67)@2
     excZC3_uid68_fpMulTest_q <= excR_x_uid23_fpMulTest_q and excR_y_uid37_fpMulTest_q and expUdf_uid62_fpMulTest_n;
 
-    -- excYZAndExcXR_uid67_fpMulTest(LOGICAL,66)@5
-    excYZAndExcXR_uid67_fpMulTest_q <= redist10_excZ_y_uid29_fpMulTest_q_5_q and excR_x_uid23_fpMulTest_q;
+    -- excYZAndExcXR_uid67_fpMulTest(LOGICAL,66)@2
+    excYZAndExcXR_uid67_fpMulTest_q <= redist6_excZ_y_uid29_fpMulTest_q_2_q and excR_x_uid23_fpMulTest_q;
 
-    -- excXZAndExcYR_uid66_fpMulTest(LOGICAL,65)@5
-    excXZAndExcYR_uid66_fpMulTest_q <= redist13_excZ_x_uid15_fpMulTest_q_5_q and excR_y_uid37_fpMulTest_q;
+    -- excXZAndExcYR_uid66_fpMulTest(LOGICAL,65)@2
+    excXZAndExcYR_uid66_fpMulTest_q <= redist9_excZ_x_uid15_fpMulTest_q_2_q and excR_y_uid37_fpMulTest_q;
 
-    -- excXZAndExcYZ_uid65_fpMulTest(LOGICAL,64)@5
-    excXZAndExcYZ_uid65_fpMulTest_q <= redist13_excZ_x_uid15_fpMulTest_q_5_q and redist10_excZ_y_uid29_fpMulTest_q_5_q;
+    -- excXZAndExcYZ_uid65_fpMulTest(LOGICAL,64)@2
+    excXZAndExcYZ_uid65_fpMulTest_q <= redist9_excZ_x_uid15_fpMulTest_q_2_q and redist6_excZ_y_uid29_fpMulTest_q_2_q;
 
-    -- excRZero_uid69_fpMulTest(LOGICAL,68)@5
+    -- excRZero_uid69_fpMulTest(LOGICAL,68)@2
     excRZero_uid69_fpMulTest_q <= excXZAndExcYZ_uid65_fpMulTest_q or excXZAndExcYR_uid66_fpMulTest_q or excYZAndExcXR_uid67_fpMulTest_q or excZC3_uid68_fpMulTest_q;
 
-    -- concExc_uid79_fpMulTest(BITJOIN,78)@5
+    -- concExc_uid79_fpMulTest(BITJOIN,78)@2
     concExc_uid79_fpMulTest_q <= excRNaN_uid78_fpMulTest_q & excRInf_uid74_fpMulTest_q & excRZero_uid69_fpMulTest_q;
 
-    -- excREnc_uid80_fpMulTest(LOOKUP,79)@5
-    excREnc_uid80_fpMulTest_combproc: PROCESS (concExc_uid79_fpMulTest_q)
+    -- excREnc_uid80_fpMulTest(LOOKUP,79)@2 + 1
+    excREnc_uid80_fpMulTest_clkproc: PROCESS (clk, areset)
     BEGIN
-        -- Begin reserved scope level
-        CASE (concExc_uid79_fpMulTest_q) IS
-            WHEN "000" => excREnc_uid80_fpMulTest_q <= "01";
-            WHEN "001" => excREnc_uid80_fpMulTest_q <= "00";
-            WHEN "010" => excREnc_uid80_fpMulTest_q <= "10";
-            WHEN "011" => excREnc_uid80_fpMulTest_q <= "00";
-            WHEN "100" => excREnc_uid80_fpMulTest_q <= "11";
-            WHEN "101" => excREnc_uid80_fpMulTest_q <= "00";
-            WHEN "110" => excREnc_uid80_fpMulTest_q <= "00";
-            WHEN "111" => excREnc_uid80_fpMulTest_q <= "00";
-            WHEN OTHERS => -- unreachable
-                           excREnc_uid80_fpMulTest_q <= (others => '-');
-        END CASE;
-        -- End reserved scope level
+        IF (areset = '1') THEN
+            excREnc_uid80_fpMulTest_q <= "01";
+        ELSIF (clk'EVENT AND clk = '1') THEN
+            CASE (concExc_uid79_fpMulTest_q) IS
+                WHEN "000" => excREnc_uid80_fpMulTest_q <= "01";
+                WHEN "001" => excREnc_uid80_fpMulTest_q <= "00";
+                WHEN "010" => excREnc_uid80_fpMulTest_q <= "10";
+                WHEN "011" => excREnc_uid80_fpMulTest_q <= "00";
+                WHEN "100" => excREnc_uid80_fpMulTest_q <= "11";
+                WHEN "101" => excREnc_uid80_fpMulTest_q <= "00";
+                WHEN "110" => excREnc_uid80_fpMulTest_q <= "00";
+                WHEN "111" => excREnc_uid80_fpMulTest_q <= "00";
+                WHEN OTHERS => -- unreachable
+                               excREnc_uid80_fpMulTest_q <= (others => '-');
+            END CASE;
+        END IF;
     END PROCESS;
 
-    -- expRPostExc_uid89_fpMulTest(MUX,88)@5
+    -- expRPostExc_uid89_fpMulTest(MUX,88)@3
     expRPostExc_uid89_fpMulTest_s <= excREnc_uid80_fpMulTest_q;
-    expRPostExc_uid89_fpMulTest_combproc: PROCESS (expRPostExc_uid89_fpMulTest_s, cstAllZWE_uid12_fpMulTest_q, expRPreExc_uid61_fpMulTest_b, cstAllOWE_uid10_fpMulTest_q)
+    expRPostExc_uid89_fpMulTest_combproc: PROCESS (expRPostExc_uid89_fpMulTest_s, cstAllZWE_uid12_fpMulTest_q, redist0_expRPreExc_uid61_fpMulTest_b_1_q, cstAllOWE_uid10_fpMulTest_q)
     BEGIN
         CASE (expRPostExc_uid89_fpMulTest_s) IS
             WHEN "00" => expRPostExc_uid89_fpMulTest_q <= cstAllZWE_uid12_fpMulTest_q;
-            WHEN "01" => expRPostExc_uid89_fpMulTest_q <= expRPreExc_uid61_fpMulTest_b;
+            WHEN "01" => expRPostExc_uid89_fpMulTest_q <= redist0_expRPreExc_uid61_fpMulTest_b_1_q;
             WHEN "10" => expRPostExc_uid89_fpMulTest_q <= cstAllOWE_uid10_fpMulTest_q;
             WHEN "11" => expRPostExc_uid89_fpMulTest_q <= cstAllOWE_uid10_fpMulTest_q;
             WHEN OTHERS => expRPostExc_uid89_fpMulTest_q <= (others => '0');
@@ -847,32 +815,32 @@ begin
     -- oneFracRPostExc2_uid81_fpMulTest(CONSTANT,80)
     oneFracRPostExc2_uid81_fpMulTest_q <= "00000000000000000000001";
 
-    -- fracRPreExc_uid59_fpMulTest(BITSELECT,58)@4
+    -- fracRPreExc_uid59_fpMulTest(BITSELECT,58)@2
     fracRPreExc_uid59_fpMulTest_in <= expFracRPostRounding_uid58_fpMulTest_q(23 downto 0);
     fracRPreExc_uid59_fpMulTest_b <= fracRPreExc_uid59_fpMulTest_in(23 downto 1);
 
-    -- redist5_fracRPreExc_uid59_fpMulTest_b_1(DELAY,183)
-    redist5_fracRPreExc_uid59_fpMulTest_b_1 : dspba_delay
+    -- redist1_fracRPreExc_uid59_fpMulTest_b_1(DELAY,179)
+    redist1_fracRPreExc_uid59_fpMulTest_b_1 : dspba_delay
     GENERIC MAP ( width => 23, depth => 1, reset_kind => "ASYNC" )
-    PORT MAP ( xin => fracRPreExc_uid59_fpMulTest_b, xout => redist5_fracRPreExc_uid59_fpMulTest_b_1_q, clk => clk, aclr => areset );
+    PORT MAP ( xin => fracRPreExc_uid59_fpMulTest_b, xout => redist1_fracRPreExc_uid59_fpMulTest_b_1_q, clk => clk, aclr => areset );
 
-    -- fracRPostExc_uid84_fpMulTest(MUX,83)@5
+    -- fracRPostExc_uid84_fpMulTest(MUX,83)@3
     fracRPostExc_uid84_fpMulTest_s <= excREnc_uid80_fpMulTest_q;
-    fracRPostExc_uid84_fpMulTest_combproc: PROCESS (fracRPostExc_uid84_fpMulTest_s, cstZeroWF_uid11_fpMulTest_q, redist5_fracRPreExc_uid59_fpMulTest_b_1_q, oneFracRPostExc2_uid81_fpMulTest_q)
+    fracRPostExc_uid84_fpMulTest_combproc: PROCESS (fracRPostExc_uid84_fpMulTest_s, cstZeroWF_uid11_fpMulTest_q, redist1_fracRPreExc_uid59_fpMulTest_b_1_q, oneFracRPostExc2_uid81_fpMulTest_q)
     BEGIN
         CASE (fracRPostExc_uid84_fpMulTest_s) IS
             WHEN "00" => fracRPostExc_uid84_fpMulTest_q <= cstZeroWF_uid11_fpMulTest_q;
-            WHEN "01" => fracRPostExc_uid84_fpMulTest_q <= redist5_fracRPreExc_uid59_fpMulTest_b_1_q;
+            WHEN "01" => fracRPostExc_uid84_fpMulTest_q <= redist1_fracRPreExc_uid59_fpMulTest_b_1_q;
             WHEN "10" => fracRPostExc_uid84_fpMulTest_q <= cstZeroWF_uid11_fpMulTest_q;
             WHEN "11" => fracRPostExc_uid84_fpMulTest_q <= oneFracRPostExc2_uid81_fpMulTest_q;
             WHEN OTHERS => fracRPostExc_uid84_fpMulTest_q <= (others => '0');
         END CASE;
     END PROCESS;
 
-    -- R_uid92_fpMulTest(BITJOIN,91)@5
+    -- R_uid92_fpMulTest(BITJOIN,91)@3
     R_uid92_fpMulTest_q <= signRPostExc_uid91_fpMulTest_q & expRPostExc_uid89_fpMulTest_q & fracRPostExc_uid84_fpMulTest_q;
 
-    -- xOut(GPOUT,4)@5
+    -- xOut(GPOUT,4)@3
     q <= R_uid92_fpMulTest_q;
 
 END normal;

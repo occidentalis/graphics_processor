@@ -3,23 +3,22 @@ module testbench_ru();
 timeunit 10ns;
 timeprecision 1ns;
 
-logic clk, areset, start;
+logic clk, sreset, start;
 logic [31:0] p1[3], p2[3], p3[3]; // in raster coordinates
 logic [3:0] color;
 logic done;
 logic fb_we;
-logic [9:0] fb_x;
-logic [9:0] fb_y;
+logic [9:0] rast_x;
+logic [9:0] rast_y;
 logic [3:0] fb_data;
 logic zb_we;
-logic [9:0] zb_x;
-logic [9:0] zb_y;
-logic [5:0] zb_wdata;
-logic [5:0] zb_rdata;
+logic [7:0] zb_wdata;
+logic [7:0] zb_rdata;
+logic [31:0] display_width, display_height;
 
 rasterizer_unit ru(.*);
 
-assign zb_rdata = 6'b111111;
+assign zb_rdata = 8'hFF;
 
 // logic w_en;
 // logic [16:0] w_addr;
@@ -77,7 +76,11 @@ assign c1 = ru.e1_pixel;
 assign c2 = ru.e2_pixel;
 assign c3 = ru.e3_pixel;
 
-
+logic [31:0] inv_area, z1_inv, z2_inv, z3_inv;
+assign inv_area = ru.inv_area;
+assign z1_inv = ru.z1_inv;
+assign z2_inv = ru.z2_inv;
+assign z3_inv = ru.z3_inv;
 
 always begin : CLOCK_GENERATION
     #1 clk = ~clk;
@@ -85,36 +88,38 @@ end
 
 initial begin : INITIALIZATION
     clk = 0;
-//    p1[0] = 32'h428a0000; // (69.0, 69.0, 1.0)
-//    p1[1] = 32'h428a0000;
-//    p1[2] = 32'h3f800000;
-//
-//    p2[0] = 32'h428a0000; // (69.0, 169.0, 1.0)
-//    p2[1] = 32'h43290000;
-//    p2[2] = 32'h3f800000;
-//
-//    p3[0] = 32'h43290000; // (169.0, 69.0, 1.0)
-//    p3[1] = 32'h428a0000;
-//    p3[2] = 32'h3f800000;
+    
+    p1[0] = 32'hbf000000; // (-0.5, 0.5, 0)
+    p1[1] = 32'h3f000000;
+    p1[2] = 32'h0;
+    p2[0] = 32'hbf000000; // (-0.5, -0.5, 0)
+    p2[1] = 32'hbf000000;
+    p2[2] = 32'h0;
+    p3[0] = 32'h3f000000; // (0.5, 0, 0)
+    p3[1] = 32'h0;
+    p3[2] = 32'h0;
+
+    display_width = 32'h43200000;
+    display_height = 32'h42f00000;
 	 
-	p1[0] = 32'h438c0000; // (280.0, 69.0, 1.0)
-    p1[1] = 32'h428a0000;
-    p1[2] = 32'h3f800000;
+	// p1[0] = 32'h438c0000; // (280.0, 69.0, 1.0)
+    // p1[1] = 32'h428a0000;
+    // p1[2] = 32'h3f800000;
 
-    p2[0] = 32'h42280000; // (42.0, 69.0, 1.0)
-    p2[1] = 32'h428a0000;
-    p2[2] = 32'h3f800000;
+    // p2[0] = 32'h42280000; // (42.0, 69.0, 1.0)
+    // p2[1] = 32'h428a0000;
+    // p2[2] = 32'h3f800000;
 
-    p3[0] = 32'h42600000; // (56.0, 169.0, 1.0)
-    p3[1] = 32'h43290000;
-    p3[2] = 32'h3f800000;
+    // p3[0] = 32'h42600000; // (56.0, 169.0, 1.0)
+    // p3[1] = 32'h43290000;
+    // p3[2] = 32'h3f800000;
 
 end
 
 initial begin : TEST_VECTORS
 
-    #2 areset = 1;
-    #2 areset = 0;
+    #2 sreset = 1;
+    #2 sreset = 0;
     #10
     #2 start = 1;
     #2 start = 0;

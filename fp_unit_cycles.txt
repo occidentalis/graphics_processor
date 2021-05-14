@@ -1,11 +1,12 @@
-fp add/sub is 7 cycles
-fp mul is 5 cycles
-fp div is 13 cycles
+NEW CYCLES BELOW
 
-fp to int is 3 cycles
-
-int to fp is 5 cycles
-
-sqr is 6 cycles (at 50MHz)
-
-fp_dot is 8 cycles (at 50MHz)
+fp_add_sub : 2 cycles
+fp_mul     : 3 cycles
+fp_div     : 9 cycles
+fp_to_int  : 1 cycles
+int_to_fp  : 1 cycles
+fp_inv     : 6 cycles
+fp_sqrt    : 6 cycles
+fp_dot     : 8 cycles
+fp_sin     : 8 cycles
+fp_cos     : 8 cycles

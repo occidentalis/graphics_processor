@@ -8,6 +8,8 @@
 			b1     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- b1
 			a2     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- a2
 			b2     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- b2
+			a3     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- a3
+			b3     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- b3
 			q      : out std_logic_vector(31 downto 0)                     -- q
 		);
 	end component fp_dot;

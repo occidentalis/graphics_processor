@@ -1,17 +1,16 @@
 module rasterizer_unit (
-	input logic clk, areset, start,
-	input logic [31:0] p1[3], p2[3], p3[3], // in raster coordinates
+	input logic clk, sreset, start,
+	input logic [31:0] p1[3], p2[3], p3[3], // in ndc coordinates
 	input logic [3:0] color,
 	output logic done,
 	output logic fb_we,
-	output logic [9:0] fb_x,
-	output logic [9:0] fb_y,
+	output logic [9:0] rast_x,
+	output logic [9:0] rast_y,
 	output logic [3:0] fb_data,
 	output logic zb_we,
-	output logic [9:0] zb_x,
-	output logic [9:0] zb_y,
-	output logic [5:0] zb_wdata,
-	input logic [5:0] zb_rdata
+	output logic [7:0] zb_wdata,
+	input logic [7:0] zb_rdata,
+	input logic [31:0] display_width, display_height // floating point
 );
 
 enum {
@@ -36,22 +35,39 @@ logic [31:0] to_fp_a, to_fp_q;
 int_to_fp fpu1(.clk(clk), .areset(reset), .a(to_fp_a), .q(to_fp_q));
 
 logic [31:0] addsub_a, addsub_b, addsub_q, addsub_s;
-fp_addsub fpu2(.clk(clk), .areset(reset), .a(addsub_a), .b(addsub_b), .q(addsub_q), .s(addsub_s));
+fp_add_sub fpu2(.clk(clk), .areset(reset), .a(addsub_a), .b(addsub_b), .q(addsub_q), .s(addsub_s));
+
+// logic [31:0] addsub_a1, addsub_b1, addsub_q1, addsub_s1;
+// fp_add_sub fpu3(.clk(clk), .areset(reset), .a(addsub_a1), .b(addsub_b1), .q(addsub_q1), .s(addsub_s1));
 
 logic [31:0] mul_a, mul_b, mul_q;
-fp_mul fpu3(.clk(clk), .areset(reset), .a(mul_a), .b(mul_b), .q(mul_q));
+fp_mul fpu4(.clk(clk), .areset(reset), .a(mul_a), .b(mul_b), .q(mul_q));
 
 logic [31:0] div_a, div_b, div_q;
-fp_div fpu4(.clk(clk), .areset(reset), .a(div_a), .b(div_b), .q(div_q));
+fp_div fpu5(.clk(clk), .areset(reset), .a(div_a), .b(div_b), .q(div_q));
+
+logic [31:0] inv_a, inv_q;
+fp_inv fpu6(.clk(clk), .areset(reset), .a(inv_a), .q(inv_q));
 
 logic p1x_we, p1y_we, p2x_we, p2y_we, p3x_we, p3y_we;
+logic [31:0] p1x_in, p1y_in, p2x_in, p2y_in, p3x_in, p3y_in;
 logic [31:0] p1x, p1y, p2x, p2y, p3x, p3y;
-reg_32 p1x_reg(.clk(clk), .write_en(p1x_we), .reset(reset), .data_in(to_int_q), .data_out(p1x));
-reg_32 p1y_reg(.clk(clk), .write_en(p1y_we), .reset(reset), .data_in(to_int_q), .data_out(p1y));
-reg_32 p2x_reg(.clk(clk), .write_en(p2x_we), .reset(reset), .data_in(to_int_q), .data_out(p2x));
-reg_32 p2y_reg(.clk(clk), .write_en(p2y_we), .reset(reset), .data_in(to_int_q), .data_out(p2y));
-reg_32 p3x_reg(.clk(clk), .write_en(p3x_we), .reset(reset), .data_in(to_int_q), .data_out(p3x));
-reg_32 p3y_reg(.clk(clk), .write_en(p3y_we), .reset(reset), .data_in(to_int_q), .data_out(p3y));
+reg_32 p1x_reg(.clk(clk), .write_en(p1x_we), .reset(reset), .data_in(p1x_in), .data_out(p1x));
+reg_32 p1y_reg(.clk(clk), .write_en(p1y_we), .reset(reset), .data_in(p1y_in), .data_out(p1y));
+reg_32 p2x_reg(.clk(clk), .write_en(p2x_we), .reset(reset), .data_in(p2x_in), .data_out(p2x));
+reg_32 p2y_reg(.clk(clk), .write_en(p2y_we), .reset(reset), .data_in(p2y_in), .data_out(p2y));
+reg_32 p3x_reg(.clk(clk), .write_en(p3x_we), .reset(reset), .data_in(p3x_in), .data_out(p3x));
+reg_32 p3y_reg(.clk(clk), .write_en(p3y_we), .reset(reset), .data_in(p3y_in), .data_out(p3y));
+
+logic p1x_int_we, p1y_int_we, p2x_int_we, p2y_int_we, p3x_int_we, p3y_int_we;
+logic [31:0] p1x_int_in, p1y_int_in, p2x_int_in, p2y_int_in, p3x_int_in, p3y_int_in;
+logic [31:0] p1x_int, p1y_int, p2x_int, p2y_int, p3x_int, p3y_int;
+reg_32 p1x_int_reg(.clk(clk), .write_en(p1x_int_we), .reset(reset), .data_in(p1x_int_in), .data_out(p1x_int));
+reg_32 p1y_int_reg(.clk(clk), .write_en(p1y_int_we), .reset(reset), .data_in(p1y_int_in), .data_out(p1y_int));
+reg_32 p2x_int_reg(.clk(clk), .write_en(p2x_int_we), .reset(reset), .data_in(p2x_int_in), .data_out(p2x_int));
+reg_32 p2y_int_reg(.clk(clk), .write_en(p2y_int_we), .reset(reset), .data_in(p2y_int_in), .data_out(p2y_int));
+reg_32 p3x_int_reg(.clk(clk), .write_en(p3x_int_we), .reset(reset), .data_in(p3x_int_in), .data_out(p3x_int));
+reg_32 p3y_int_reg(.clk(clk), .write_en(p3y_int_we), .reset(reset), .data_in(p3y_int_in), .data_out(p3y_int));
 
 logic z1_inv_we, z2_inv_we, z3_inv_we;
 logic [31:0] z1_inv_in, z2_inv_in, z3_inv_in, z1_inv, z2_inv, z3_inv;
@@ -109,7 +125,7 @@ always_ff @(posedge clk) begin
 	else
 		cycle_count <= 1;
 
-	if (areset == 1)
+	if (sreset == 1)
 		state <= DONE;
 	else
 		state <= next_state;
@@ -120,12 +136,10 @@ always_comb begin
 	reset = 1'b0;
 	done = 1'b0;
 	fb_we = 1'b0;
-	fb_x = curr_x
-	fb_y = curr_y;
+	rast_x = curr_x[9:0];
+	rast_y = curr_y[9:0];
 	fb_data = color;
 	zb_we = 1'b0;
-	zb_x = 10'b0;
-	zb_y = 10'b0;
 	zb_wdata = 6'b0;
 	to_int_a = 32'b0;
 	to_fp_a = 32'b0;
@@ -135,12 +149,31 @@ always_comb begin
 	mul_b = 32'b0;
 	div_a = 32'b0;
 	div_b = 32'b0;
+	inv_a = 32'b0;
 	p1x_we = 1'b0;
 	p1y_we = 1'b0;
 	p2x_we = 1'b0;
 	p2y_we = 1'b0;
 	p3x_we = 1'b0;
 	p3y_we = 1'b0;
+	p1x_in = 32'b0;
+	p1y_in = 32'b0;
+	p2x_in = 32'b0;
+	p2y_in = 32'b0;
+	p3x_in = 32'b0;
+	p3y_in = 32'b0;
+	p1x_int_we = 1'b0;
+	p1y_int_we = 1'b0;
+	p2x_int_we = 1'b0;
+	p2y_int_we = 1'b0;
+	p3x_int_we = 1'b0;
+	p3y_int_we = 1'b0;
+	p1x_int_in = 32'b0;
+	p1y_int_in = 32'b0;
+	p2x_int_in = 32'b0;
+	p2y_int_in = 32'b0;
+	p3x_int_in = 32'b0;
+	p3y_int_in = 32'b0;
 	z1_inv_we = 1'b0;
 	z2_inv_we = 1'b0;
 	z3_inv_we = 1'b0;
@@ -199,7 +232,7 @@ always_comb begin
 		end
 
 		INT_CONVERSION : begin
-			if (cycle_count == 9)
+			if (cycle_count == 12)
 				next_state = GET_BOUNDS;
 		end
 
@@ -208,7 +241,7 @@ always_comb begin
 		end
 
 		CALC_EDGES : begin
-			if (cycle_count == 47)
+			if (cycle_count == 23)
 				next_state = INIT_XY;
 		end
 
@@ -225,7 +258,7 @@ always_comb begin
 		end
 
 		RASTER : begin
-			//if (cycle_count == 2)
+			// if (cycle_count == 50)
 				next_state = NEXT_PIXEL;
 		end
 
@@ -247,24 +280,91 @@ always_comb begin
 
 		INT_CONVERSION : begin
 			case (cycle_count)
-				1 : to_int_a = p1[0];
-				2 : to_int_a = p1[1];
-				3 : to_int_a = p2[0];
+				1 : begin
+					addsub_a = p1[0];
+					addsub_b = 32'h3f800000;
+				end
+				2 : begin
+					addsub_a = 32'h3f800000;
+					addsub_b = p1[1];
+				end
+				3 : begin
+					addsub_a = p2[0];
+					addsub_b = 32'h3f800000;
+			
+					mul_a = addsub_q;
+					mul_b = display_width;
+				end
 				4 : begin
-					to_int_a = p2[1];
-					p1x_we = 1;
+					addsub_a = 32'h3f800000;
+					addsub_b = p2[1];
+
+					mul_a = addsub_s;
+					mul_b = display_height;
 				end
 				5 : begin
-					to_int_a = p3[0];
-					p1y_we = 1;
+					addsub_a = p3[0];
+					addsub_b = 32'h3f800000;
+
+					mul_a = addsub_q;
+					mul_b = display_width;
 				end
 				6 : begin
-					to_int_a = p3[1];
-					p2x_we = 1;
+					addsub_a = 32'h3f800000;
+					addsub_b = p3[1];
+
+					mul_a = addsub_s;
+					mul_b = display_height;
+
+					to_int_a = mul_q;
+					p1x_we = 1'b1;
+					p1x_in = mul_q;
 				end
-				7 : p2y_we = 1;
-				8 : p3x_we = 1;
-				9 : p3y_we = 1;
+				7 : begin
+					mul_a = addsub_q;
+					mul_b = display_width;
+
+					to_int_a = mul_q;
+					p1y_we = 1'b1;
+					p1y_in = mul_q;
+					p1x_int_we = 1'b1;
+					p1x_int_in = to_int_q;
+				end
+				8 : begin
+					mul_a = addsub_s;
+					mul_b = display_height;
+
+					to_int_a = mul_q;
+					p2x_we = 1'b1;
+					p2x_in = mul_q;
+					p1y_int_we = 1'b1;
+					p1y_int_in = to_int_q;
+				end
+				9 : begin
+					to_int_a = mul_q;
+					p2y_we = 1'b1;
+					p2y_in = mul_q;
+					p2x_int_we = 1'b1;
+					p2x_int_in = to_int_q;
+				end
+				10 : begin
+					to_int_a = mul_q;
+					p3x_we = 1'b1;
+					p3x_in = mul_q;
+					p2y_int_we = 1'b1;
+					p2y_int_in = to_int_q;
+				end
+				11 : begin
+					to_int_a = mul_q;
+					p3y_we = 1'b1;
+					p3y_in = mul_q;
+					p3x_int_we = 1'b1;
+					p3x_int_in = to_int_q;
+				end
+				12 : begin
+					p3y_int_we = 1'b1;
+					p3y_int_in = to_int_q;
+				end
 			endcase
 		end
 
@@ -274,28 +374,28 @@ always_comb begin
 			lx_we = 1;
 			by_we = 1;
 
-			if (p1x <= p2x) begin 				// p1 left of p2
-				if (p1x <= p3x) lx_in = p1x; 		// p1 left of p3
-				else lx_in = p3x; 					// p3 left of p1
-				if (p2x <= p3x) rx_in = p3x; 		// p3 right of p2
-				else rx_in = p2x; 					// p2 right of p3
+			if (p1x_int <= p2x_int) begin 				// p1 left of p2
+				if (p1x_int <= p3x_int) lx_in = p1x_int; 		// p1 left of p3
+				else lx_in = p3x_int; 					// p3 left of p1
+				if (p2x_int <= p3x_int) rx_in = p3x_int; 		// p3 right of p2
+				else rx_in = p2x_int; 					// p2 right of p3
 			end else begin 						// p1 right of p2
-				if (p3x <= p1x) rx_in = p1x; 		// p1 right of p3
-				else rx_in = p3x; 					// p3 right of p1
-				if (p3x <= p2x) lx_in = p3x;		// p3 left of p2
-				else lx_in = p2x;					// p2 left of p3
+				if (p3x_int <= p1x_int) rx_in = p1x_int; 		// p1 right of p3
+				else rx_in = p3x_int; 					// p3 right of p1
+				if (p3x_int <= p2x_int) lx_in = p3x_int;		// p3 left of p2
+				else lx_in = p2x_int;					// p2 left of p3
 			end
 			
-			if (p1y <= p2y) begin 				// p1 top of p2
-				if (p1y <= p3y) ty_in = p1y; 		// p1 top of p3
-				else ty_in = p3y; 					// p3 top of p1
-				if (p2y <= p3y) by_in = p3y; 		// p3 bottom of p2
-				else by_in = p2y; 					// p2 bottom of p3
+			if (p1y_int <= p2y_int) begin 				// p1 top of p2
+				if (p1y_int <= p3y_int) ty_in = p1y_int; 		// p1 top of p3
+				else ty_in = p3y_int; 					// p3 top of p1
+				if (p2y_int <= p3y_int) by_in = p3y_int; 		// p3 bottom of p2
+				else by_in = p2y_int; 					// p2 bottom of p3
 			end else begin 						// p1 bottom of p2
-				if (p3y <= p1y) by_in = p1y; 		// p1 bottom of p3
-				else by_in = p3y; 					// p3 bottom of p1
-				if (p3y <= p2y) ty_in = p3y;		// p3 top of p2
-				else ty_in = p2y;					// p2 top of p3
+				if (p3y_int <= p1y_int) by_in = p1y_int; 		// p1 bottom of p3
+				else by_in = p3y_int; 					// p3 bottom of p1
+				if (p3y_int <= p2y_int) ty_in = p3y_int;		// p3 top of p2
+				else ty_in = p2y_int;					// p2 top of p3
 			end
 			
 		end
@@ -304,224 +404,187 @@ always_comb begin
 			case (cycle_count)
 			// dX and dY for edge 1
 				1 : begin
-					addsub_a = p1[0]; // dX1 = X1 - X3
-					addsub_b = p3[0];
+					addsub_a = p1x; // dX1 = X1 - X3
+					addsub_b = p3x;
 
-					div_a = 32'h3f800000;
-					div_b = p1[2];
+					inv_a = p1[2]; // inv Zs
 				end
 				2 : begin
-					addsub_a = p1[1]; // dY1 = Y1 - Y3
-					addsub_b = p3[1];
+					addsub_a = p1y; // dY1 = Y1 - Y3
+					addsub_b = p3y;
 
-					div_a = 32'h3f800000;
-					div_b = p2[2];
+					inv_a = p2[2];
 				end
 			// dX and dY for edge 2
 				3 : begin
-					addsub_a = p2[0]; // dX2 = X2 - X1
-					addsub_b = p1[0];
+					addsub_a = p2x; // dX2 = X2 - X1
+					addsub_b = p1x;
 
-					div_a = 32'h3f800000;
-					div_b = p3[2];
+					dx1_we = 1'b1;
+					dx1_in = addsub_s;
+
+					mul_a = {1'b1, p1y[30:0]}; // (0 - Y1)dX1
+					mul_b = addsub_s;
+
+					inv_a = p3[2];
 				end
 				4 : begin
-					addsub_a = p2[1]; // dY2 = Y2 - Y1
-					addsub_b = p1[1];
+					addsub_a = p2y; // dY2 = Y2 - Y1
+					addsub_b = p1y;
+
+					dy1_we = 1'b1;
+					dy1_in = addsub_s;
+
+					mul_a = {1'b1, p1x[30:0]}; // 0 - X1
+					mul_b = addsub_s;
 				end
 			// dX and dY for edge 3
 				5 : begin
-					addsub_a = p3[0]; // dX3 = X3 - X2
-					addsub_b = p2[0];
-				end
-				6 : begin
-					addsub_a = p3[1]; // dY3 = Y3 - Y2
-					addsub_b = p2[1];
-				end
-			// save dX's and dY's, do subtractions for Ei
-				8 : begin
-					dx1_we = 1;
-					dx1_in = addsub_s;
+					addsub_a = p3x; // dX3 = X3 - X2
+					addsub_b = p2x;
 
-					addsub_a = 0; // begin E1 calcs
-					addsub_b = p1[0];
-				end
-				9 : begin
-					dy1_we = 1;
-					dy1_in = addsub_s;
-
-					addsub_a = 0;
-					addsub_b = p1[1];
-				end
-				10 : begin
-					dx2_we = 1;
+					dx2_we = 1'b1;
 					dx2_in = addsub_s;
 
-					addsub_a = 0;
-					addsub_b = p2[0];
+					mul_a = {1'b1, p2y[30:0]}; // 0 - Y2
+					mul_b = addsub_s;
 				end
-				11 : begin
-					dy2_we = 1;
+				6 : begin
+					addsub_a = p3y; // dY3 = Y3 - Y2
+					addsub_b = p2y;
+
+					dy2_we = 1'b1;
 					dy2_in = addsub_s;
 
-					addsub_a = 0;
-					addsub_b = p2[1];
+					mul_a = {1'b1, p2x[30:0]}; // 0 - X2
+					mul_b = addsub_s;
+
+					temp_we = 1'b1;
+					temp_in = mul_q;
 				end
-				12 : begin
-					dx3_we = 1;
+			// save dX's and dY's, do subtractions for Ei
+				7 : begin
+					dx3_we = 1'b1;
 					dx3_in = addsub_s;
 
-					addsub_a = 0;
-					addsub_b = p3[0];
+					mul_a = {1'b1, p3y[30:0]}; // 0 - Y3
+					mul_b = addsub_s;
+
+					addsub_a = mul_q;
+					addsub_b = temp;
+
+					z1_inv_we = 1'b1;
+					z1_inv_in = inv_q;
 				end
-				13 : begin
-					dy3_we = 1;
+				8 : begin
+					dy3_we = 1'b1;
 					dy3_in = addsub_s;
 
-					addsub_a = 0;
-					addsub_b = p3[1];
+					mul_a = {1'b1, p3x[30:0]}; // 0 - X3
+					mul_b = addsub_s;
+
+					temp_we = 1'b1;
+					temp_in = mul_q;
+
+					addsub_a = p1x;
+					addsub_b = p3x;
+
+					z2_inv_we = 1'b1;
+					z2_inv_in = inv_q;
 				end
-				14 : begin
-					addsub_a = p1[0];
-					addsub_b = p3[0];
+				9 : begin
+					addsub_a = mul_q;
+					addsub_b = temp;
 
-					z1_inv_we = 1;
-					z1_inv_in = div_q;
+					e1_we = 1'b1;
+					e1_in = addsub_s;
+
+					z3_inv_we = 1'b1;
+					z3_inv_in = inv_q;
 				end
-			// Ei Multiplies
-				15 : begin
-					mul_a = addsub_s; // (x - x1) * dy1
-					mul_b = dy1;
-					
-					to_int_a = dy1;
+				10 : begin
+					temp_we = 1'b1;
+					temp_in = mul_q;
 
-					addsub_a = p1[1];
-					addsub_b = p3[1];
+					addsub_a = p1y;
+					addsub_b = p3y;
 
-					z2_inv_we = 1;
-					z2_inv_in = div_q;
-				end
-				16 : begin
-					mul_a = addsub_s; // (y - y1) * dx1
-					mul_b = dx1;
-
-					to_int_a = dx1;
-
-					z3_inv_we = 1;
-					z3_inv_in = div_q;
-				end
-				17 : begin
-					mul_a = addsub_s; // (x - x2) * dy2
-					mul_b = dy2;
-
-					to_int_a = dy2;
-				end
-				18 : begin
-					mul_a = addsub_s; // (y - y2) * dx2
-					mul_b = dx2;
-
-					to_int_a = dx2;
-					dy1_we = 1;
-					dy1_in = to_int_q;
-				end
-				19 : begin
-					mul_a = addsub_s; // (x - x3) * dy3
+					mul_a = addsub_s;
 					mul_b = dy3;
-
-					to_int_a = dy3;
-					dx1_we = 1;
-					dx1_in = to_int_q;
 				end
-				20 : begin
-					mul_a = addsub_s; // (y - y3) * dx3
+				11 : begin
+					addsub_a = mul_q;
+					addsub_b = temp;
+
+					e2_we = 1'b1;
+					e2_in = addsub_s;
+				end
+				12 : begin
+					mul_a = addsub_s;
 					mul_b = dx3;
 
-					to_int_a = dx3;
-					dy2_we = 1;
-					dy2_in = to_int_q;
-					
-					temp_we = 1; // result of (x - x1) * dy1
-					temp_in = mul_q;
+					to_int_a = dx1;
 				end
-			// Final Ei subtracts
-				21 : begin
-					addsub_a = temp; // E1(x, y) = (x - x1) * dy1 - (y - y1) * dx1
-					addsub_b = mul_q;
+				13 : begin
+					e3_we = 1'b1;
+					e3_in = addsub_s;
 
-					dx2_we = 1;
+					temp_we = 1'b1;
+					temp_in = mul_q;
+
+					to_int_a = dy1;
+					dx1_we = 1'b1;
+					dx1_in = to_int_q;
+				end
+				14 : begin
+					to_int_a = dx2;
+					dy1_we = 1'b1;
+					dy1_in = to_int_q;
+				end
+				15 : begin
+					addsub_a = mul_q;
+					addsub_b = temp;
+
+					to_int_a = dy2;
+					dx2_we = 1'b1;
 					dx2_in = to_int_q;
-
-					mul_a = addsub_s;
-					mul_b = dy3;
 				end
-				22 : begin
-					temp_we = 1; // result of (x - x2) * dy2
-					temp_in = mul_q;
-
-					dy3_we = 1;
-					dy3_in = to_int_q;
-
-					mul_a = addsub_s;
-					mul_b = dx3;	
+				16 : begin
+					to_int_a = dx3;
+					dy2_we = 1'b1;
+					dy2_in = to_int_q;
 				end
-				23 : begin
-					addsub_a = temp; // E2(x, y) = (x - x2) * dy2 - (y - y2) * dx2
-					addsub_b = mul_q;
+				17 : begin
+					inv_a = addsub_q;
 
-					dx3_we = 1;
+					to_int_a = dy3;
+					dx3_we = 1'b1;
 					dx3_in = to_int_q;
 				end
-				24 : begin
-					temp_we = 1; // result of (x - x3) * dy3
-					temp_in = mul_q;
+				18 : begin
+					to_int_a = e1;
+					dy3_we = 1'b1;
+					dy3_in = to_int_q;
 				end
-				25 : begin
-					addsub_a = temp; // E3(x, y) = (x - x3) * dy3 - (y - y3) * dx3
-					addsub_b = mul_q;
-				end
-				26 : begin
-					temp_we = 1;
-					temp_in = mul_q;
-				end
-				27 : begin
-					addsub_a = temp; // area calc
-					addsub_b = mul_q;
-				end
-				28 : begin
-					e1_we = 1;
-					e1_in = addsub_s;
-					to_int_a = addsub_s;
-				end
-				30 : begin
-					e2_we = 1;
-					e2_in = addsub_s;
-					to_int_a = addsub_s;
-				end
-				31 : begin
-					e1_we = 1;
+				19 : begin
+					to_int_a = e2;
+					e1_we = 1'b1;
 					e1_in = to_int_q;
 				end
-				32 : begin
-					e3_we = 1;
-					e3_in = addsub_s;
-					to_int_a = addsub_s;
-				end
-				33 : begin
-					e2_we = 1;
+				20 : begin
+					to_int_a = e3;
+					e2_we = 1'b1;
 					e2_in = to_int_q;
 				end
-				34 : begin
-					div_a = 32'h3f800000; // take inverse of area calc
-					div_b = addsub_s;
-				end
-				35 : begin
-					e3_we = 1;
+				21 : begin
+					e3_we = 1'b1;
 					e3_in = to_int_q;
 				end
-				47 : begin
-					inv_area_we = 1;
-					inv_area_in = div_q;
+				23 : begin
+					inv_area_we = 1'b1;
+					inv_area_in = inv_q;
 				end
+
 			endcase
 		end
 
@@ -564,7 +627,7 @@ always_comb begin
 					if (e1_pixel < 32'h80000000 &&
 						e2_pixel < 32'h80000000 &&
 						e3_pixel < 32'h80000000) begin
-						next_state = RASTER;
+						next_state = Z_CHECK;
 					end else begin
 						next_state = NEXT_PIXEL;
 					end
@@ -579,77 +642,147 @@ always_comb begin
 				end
 				2 : begin
 					to_fp_a = e1_pixel;
+					mul_a = to_fp_q;
+					mul_b = inv_area;
 				end
 				3 : begin
 					to_fp_a = e2_pixel;
-				end
-				6 : begin
 					mul_a = to_fp_q;
 					mul_b = inv_area;
 				end
-				7 : begin
+				4 : begin
 					mul_a = to_fp_q;
 					mul_b = inv_area;
 				end
-				8 : begin
-					mul_a = to_fp_q;
-					mul_b = inv_area;
-				end
-				11 : begin
+				5 : begin
 					mul_a = mul_q;
 					mul_b = z1_inv;
 				end
-				12 : begin
+				6 : begin
 					mul_a = mul_q;
 					mul_b = z2_inv;
 				end
-				13 : begin
+				7 : begin
 					mul_a = mul_q;
 					mul_b = z3_inv;
 				end
-				16 : begin
-					temp_we = 1;
+				8 : begin
+					temp_we = 1'b1;
 					temp_in = mul_q;
 				end
-				17 : begin
-					addsub_a = mul_q;
-					addsub_b = temp;
+				9 : begin
+					addsub_a = temp;
+					addsub_b = mul_q;
 				end
-				18 : begin
-					temp_we = 1;
+				10 : begin
+					temp_we = 1'b1;
 					temp_in = mul_q;
+				end
+				11 : begin
+					addsub_a = temp;
+					addsub_b = addsub_q;
+				end
+				13 : begin
+					inv_a = addsub_q;
+				end
+				19 : begin
+					addsub_a = inv_q;
+					addsub_b = 32'h3f800000;
+				end
+				21 : begin
+					mul_a = addsub_q;
+					mul_b = 32'h42fe0000;
 				end
 				24 : begin
-					addsub_a = addsub_q;
-					addsub_b = temp;
-				end
-				31 : begin
-					div_a = 32'h3f800000; // 1.0
-					div_b = addsub_q;
-				end
-				44 : begin
-					mul_a = div_q;
-					mul_b = 32'h42800000; // 64.0
-				end
-				49 : begin
 					to_int_a = mul_q;
 				end
-				51 : begin
-					zb_x = curr_x[9:0];
-					zb_y = curr_y[9:0];
-				end
-				52 : begin
-					if (to_int_q < zb_rdata) begin
+				25 : begin
+					if (to_int_q[7:0] < zb_rdata) begin
 						next_state = RASTER;
-						zb_wdata = to_int_q;
+						zb_wdata = to_int_q[7:0];
 						zb_we = 1;
-						zb_x = curr_x[9:0];
-						zb_y = curr_y[9:0];
-						
 					end else begin
 						next_state = NEXT_PIXEL;
 					end
 				end
+
+
+				// 1 : begin
+				// 	to_fp_a = e3_pixel;
+				// end
+				// 2 : begin
+				// 	to_fp_a = e1_pixel;
+				// end
+				// 3 : begin
+				// 	to_fp_a = e2_pixel;
+				// end
+				// 6 : begin
+				// 	mul_a = to_fp_q;
+				// 	mul_b = inv_area;
+				// end
+				// 7 : begin
+				// 	mul_a = to_fp_q;
+				// 	mul_b = inv_area;
+				// end
+				// 8 : begin
+				// 	mul_a = to_fp_q;
+				// 	mul_b = inv_area;
+				// end
+				// 11 : begin
+				// 	mul_a = mul_q;
+				// 	mul_b = z1_inv;
+				// end
+				// 12 : begin
+				// 	mul_a = mul_q;
+				// 	mul_b = z2_inv;
+				// end
+				// 13 : begin
+				// 	mul_a = mul_q;
+				// 	mul_b = z3_inv;
+				// end
+				// 16 : begin
+				// 	temp_we = 1;
+				// 	temp_in = mul_q;
+				// end
+				// 17 : begin
+				// 	addsub_a = mul_q;
+				// 	addsub_b = temp;
+				// end
+				// 18 : begin
+				// 	temp_we = 1;
+				// 	temp_in = mul_q;
+				// end
+				// 24 : begin
+				// 	addsub_a = addsub_q;
+				// 	addsub_b = temp;
+				// end
+				// 31 : begin
+				// 	div_a = 32'h3f800000; // 1.0
+				// 	div_b = addsub_q;
+				// end
+				// 44 : begin
+				// 	mul_a = div_q;
+				// 	mul_b = 32'h42800000; // 64.0
+				// end
+				// 49 : begin
+				// 	to_int_a = mul_q;
+				// end
+				// 51 : begin
+				// 	zb_x = curr_x[9:0];
+				// 	zb_y = curr_y[9:0];
+				// end
+				// 52 : begin
+				// 	if (to_int_q[5:0] < zb_rdata) begin
+				// 		next_state = RASTER;
+				// 		zb_wdata = to_int_q[5:0];
+				// 		zb_we = 1;
+				// 		zb_x = curr_x[9:0];
+				// 		zb_y = curr_y[9:0];
+						
+				// 	end else begin
+				// 		next_state = NEXT_PIXEL;
+				// 	end
+				// end
 			endcase
 		end
 
@@ -671,7 +804,7 @@ always_comb begin
 		end
 
 		DONE : begin
-			done = 1;
+			done = 1'b1;
 		end
 	endcase
 end
