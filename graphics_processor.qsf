@@ -38,7 +38,7 @@
 
 set_global_assignment -name FAMILY "MAX 10"
 set_global_assignment -name DEVICE 10M50DAF484C7G
-set_global_assignment -name TOP_LEVEL_ENTITY test_top_level
+set_global_assignment -name TOP_LEVEL_ENTITY graphics_processor
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 18.1.0
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "17:36:04  APRIL 29, 2021"
 set_global_assignment -name LAST_QUARTUS_VERSION "18.1.0 Lite Edition"
@@ -83,15 +83,13 @@ set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "1000000 ns" -section_id 
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME testbench_ru -section_id testbench_ru
 set_location_assignment PIN_A7 -to Keys[1]
 set_location_assignment PIN_B8 -to Keys[0]
-set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
-set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
-set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_global_assignment -name EDA_TEST_BENCH_NAME testbench_mm -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id testbench_mm
 set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "100000 ns" -section_id testbench_mm
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME testbench_mm -section_id testbench_mm
 set_global_assignment -name EDA_TEST_BENCH_FILE testbench/testbench_ru.sv -section_id testbench_ru
 set_global_assignment -name EDA_TEST_BENCH_FILE testbench/testbench_mm.sv -section_id testbench_mm
+set_global_assignment -name SYSTEMVERILOG_FILE graphics_processor.sv
 set_global_assignment -name SYSTEMVERILOG_FILE mat_vec_multiply.sv
 set_global_assignment -name SYSTEMVERILOG_FILE shader_unit.sv
 set_global_assignment -name SYSTEMVERILOG_FILE testbench/testbench_mm.sv
@@ -100,9 +98,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE memory/address_translator_gpu.sv
 set_global_assignment -name SYSTEMVERILOG_FILE testbench/testbench_ru.sv
 set_global_assignment -name SDC_FILE lab6.sdc
 set_global_assignment -name SYSTEMVERILOG_FILE VGA_controller.sv
-set_global_assignment -name SYSTEMVERILOG_FILE test_top_level.sv
 set_global_assignment -name SYSTEMVERILOG_FILE registers/reg_32.sv
-set_global_assignment -name SYSTEMVERILOG_FILE graphics_processor.sv
 set_global_assignment -name SYSTEMVERILOG_FILE rasterizer_unit.sv
 set_global_assignment -name QIP_FILE fp_units/fp_mul.qip
 set_global_assignment -name SIP_FILE fp_units/fp_mul.sip
@@ -129,4 +125,7 @@ set_global_assignment -name QIP_FILE memory/vertices.qip
 set_global_assignment -name QIP_FILE test.qip
 set_global_assignment -name QIP_FILE tws.qip
 set_global_assignment -name QIP_FILE memory/z_buffer.qip
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
