@@ -97,16 +97,17 @@ module test_top_level (
     address_translator_vga at0(.x(DrawX), .y(DrawY), .addr(read_pixel_addr));
     address_translator_gpu at1(.x(rast_x), .y(rast_y), .addr(write_pixel_addr));
 
+    logic [16:0] clear_write;
     logic [3:0] vga_data;
     always_comb begin : FB_READ_WRITE_CONTROL
-        fb_wraddress = write_pixel_addr;
-        zb_wraddress = write_pixel_addr;
+        fb_wraddress = state == CLEAR_SCREEN ? clear_write : write_pixel_addr;
+        zb_wraddress = state == CLEAR_SCREEN ? clear_write : write_pixel_addr;
         fb_rdaddress = read_pixel_addr;
-        fb_data = su_color;
-        zb_data = rast_zb_wdata;
+        fb_data = state == CLEAR_SCREEN ? clear_write[3:0] : su_color;
+        zb_data = state == CLEAR_SCREEN ? 8'hFF : rast_zb_wdata;
         rast_zb_rdata = zb_q;
-        fb_we = rast_fb_we;
-        zb_we = rast_zb_we;
+        fb_we = state == CLEAR_SCREEN | rast_fb_we;
+        zb_we = state == CLEAR_SCREEN | rast_zb_we;
         poly_address = curr_poly[11:0];
 
         if (~blank) // active low
@@ -358,6 +359,8 @@ module test_top_level (
 
         angle_we = 1'b0;
         angle_in = 32'h3f060a96; // 32'h3f060a96
+
+        clear_write = 17'b0;
         
         case (state)
             DONE : begin
@@ -673,16 +676,12 @@ module test_top_level (
                 end
             end
 
-            WAIT_FOR_VSYNC : begin
-                // if (DrawY > 10'd480)
-                    next_state = RASTER_TRIANGLE;
-            end
 
             RASTER_TRIANGLE : begin
                 if (cycle_count < 5) rast_start = 1'b1;
                 else if (rast_done) begin
                     if (curr_poly == 0)
-                        next_state = CLEAR_SCREEN;
+                        next_state = WAIT_FOR_VSYNC;
                     else
                         next_state = READ_TETRA_VERTICES;
                 end
@@ -698,8 +697,15 @@ module test_top_level (
                 endcase
             end
 
+            WAIT_FOR_VSYNC : begin
+                 if (DrawY >= 10'd480)
+                    next_state = CLEAR_SCREEN;
+            end
+
             CLEAR_SCREEN : begin
-                next_state = READ_TETRA_VERTICES;
+                clear_write = cycle_count - 1;
+                if (cycle_count == 76800)
+                    next_state = READ_TETRA_VERTICES;
             end
 
             // RASTER_TRIANGLE2 : begin
