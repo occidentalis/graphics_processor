@@ -9,7 +9,7 @@ logic [31:0] x, y, z; // fp numbers
 logic [31:0] m[4][4]; // row major - fp numbers
 logic [31:0] x_out, y_out, z_out; // fp numbers
 logic done;
-matrix_multiply mm(.*);
+mat_vec_multiply mm(.*);
 
 int state;
 assign state = mm.state;

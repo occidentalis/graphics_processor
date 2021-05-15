@@ -285,13 +285,17 @@ always_comb begin : fsm
                     dot_b2 = view_vector[2];
                 end
                 9 : begin
-                    mul_a = dot_q;
-                    mul_b = 32'h41800000; // 16.0
+                    addsub_a = dot_q;
+                    addsub_b = 32'h3f800000;
                 end
-                12 : begin
+                11 : begin
+                    mul_a = addsub_q;
+                    mul_b = 32'h41000000; // 8.0
+                end
+                14 : begin
                     to_int_a = mul_q;
                 end
-                13 : begin
+                15 : begin
                     temp_we = 1'b1;
                     temp_in = to_int_q;
                     next_state = DONE;

@@ -1,4 +1,4 @@
-module matrix_multiply (
+module mat_vec_multiply (
 	input logic clk,
 	input logic start,
 	input logic [31:0] x, y, z, // fp numbers
