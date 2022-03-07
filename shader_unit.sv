@@ -139,7 +139,7 @@ always_comb begin : fsm
                     addsub_b = p1[0];
 
                     ay_we = 1'b1;
-                    ax_in = addsub_s;
+                    ay_in = addsub_s;
                 end
                 5 : begin
                     addsub_a = p3[1]; // by

@@ -91,13 +91,13 @@ initial begin : INITIALIZATION
     
     p1[0] = 32'hbf000000; // (-0.5, 0.5, 0)
     p1[1] = 32'h3f000000;
-    p1[2] = 32'h0;
+    p1[2] = 32'h3dcccccd;
     p2[0] = 32'hbf000000; // (-0.5, -0.5, 0)
     p2[1] = 32'hbf000000;
-    p2[2] = 32'h0;
+    p2[2] = 32'h3dcccccd;
     p3[0] = 32'h3f000000; // (0.5, 0, 0)
     p3[1] = 32'h0;
-    p3[2] = 32'h0;
+    p3[2] = 32'h3dcccccd;
 
     display_width = 32'h43200000;
     display_height = 32'h42f00000;

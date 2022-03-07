@@ -232,7 +232,7 @@ always_comb begin
 		end
 
 		INT_CONVERSION : begin
-			if (cycle_count == 12)
+			if (cycle_count == 17)
 				next_state = GET_BOUNDS;
 		end
 
@@ -329,6 +329,9 @@ always_comb begin
 					p1y_in = mul_q;
 					p1x_int_we = 1'b1;
 					p1x_int_in = to_int_q;
+
+					addsub_a = p1[2];
+					addsub_b = 32'h3f800000;
 				end
 				8 : begin
 					mul_a = addsub_s;
@@ -339,6 +342,9 @@ always_comb begin
 					p2x_in = mul_q;
 					p1y_int_we = 1'b1;
 					p1y_int_in = to_int_q;
+
+					addsub_a = p2[2];
+					addsub_b = 32'h3f800000;
 				end
 				9 : begin
 					to_int_a = mul_q;
@@ -346,6 +352,11 @@ always_comb begin
 					p2y_in = mul_q;
 					p2x_int_we = 1'b1;
 					p2x_int_in = to_int_q;
+
+					addsub_a = p3[2];
+					addsub_b = 32'h3f800000;
+
+					inv_a = addsub_q;
 				end
 				10 : begin
 					to_int_a = mul_q;
@@ -353,6 +364,8 @@ always_comb begin
 					p3x_in = mul_q;
 					p2y_int_we = 1'b1;
 					p2y_int_in = to_int_q;
+
+					inv_a = addsub_q;
 				end
 				11 : begin
 					to_int_a = mul_q;
@@ -360,11 +373,26 @@ always_comb begin
 					p3y_in = mul_q;
 					p3x_int_we = 1'b1;
 					p3x_int_in = to_int_q;
+
+					inv_a = addsub_q;
 				end
 				12 : begin
 					p3y_int_we = 1'b1;
 					p3y_int_in = to_int_q;
 				end
+				15 : begin
+					z1_inv_we = 1'b1;
+					z1_inv_in = inv_q;
+				end
+				16 : begin
+					z2_inv_we = 1'b1;
+					z2_inv_in = inv_q;
+				end
+				17 : begin
+					z3_inv_we = 1'b1;
+					z3_inv_in = inv_q;
+				end
+				
 			endcase
 		end
 
@@ -406,14 +434,10 @@ always_comb begin
 				1 : begin
 					addsub_a = p1x; // dX1 = X1 - X3
 					addsub_b = p3x;
-
-					inv_a = p1[2]; // inv Zs
 				end
 				2 : begin
 					addsub_a = p1y; // dY1 = Y1 - Y3
 					addsub_b = p3y;
-
-					inv_a = p2[2];
 				end
 			// dX and dY for edge 2
 				3 : begin
@@ -425,8 +449,6 @@ always_comb begin
 
 					mul_a = {1'b1, p1y[30:0]}; // (0 - Y1)dX1
 					mul_b = addsub_s;
-
-					inv_a = p3[2];
 				end
 				4 : begin
 					addsub_a = p2y; // dY2 = Y2 - Y1
@@ -472,9 +494,6 @@ always_comb begin
 
 					addsub_a = mul_q;
 					addsub_b = temp;
-
-					z1_inv_we = 1'b1;
-					z1_inv_in = inv_q;
 				end
 				8 : begin
 					dy3_we = 1'b1;
@@ -488,9 +507,6 @@ always_comb begin
 
 					addsub_a = p1x;
 					addsub_b = p3x;
-
-					z2_inv_we = 1'b1;
-					z2_inv_in = inv_q;
 				end
 				9 : begin
 					addsub_a = mul_q;
@@ -498,9 +514,6 @@ always_comb begin
 
 					e1_we = 1'b1;
 					e1_in = addsub_s;
-
-					z3_inv_we = 1'b1;
-					z3_inv_in = inv_q;
 				end
 				10 : begin
 					temp_we = 1'b1;
@@ -542,8 +555,8 @@ always_comb begin
 					dy1_in = to_int_q;
 				end
 				15 : begin
-					addsub_a = mul_q;
-					addsub_b = temp;
+					addsub_a = temp;
+					addsub_b = mul_q;
 
 					to_int_a = dy2;
 					dx2_we = 1'b1;
@@ -555,7 +568,7 @@ always_comb begin
 					dy2_in = to_int_q;
 				end
 				17 : begin
-					inv_a = addsub_q;
+					inv_a = addsub_s;
 
 					to_int_a = dy3;
 					dx3_we = 1'b1;
@@ -686,17 +699,13 @@ always_comb begin
 					inv_a = addsub_q;
 				end
 				19 : begin
-					addsub_a = inv_q;
-					addsub_b = 32'h3f800000;
-				end
-				21 : begin
-					mul_a = addsub_q;
+					mul_a = inv_q;
 					mul_b = 32'h42fe0000;
 				end
-				24 : begin
+				22 : begin
 					to_int_a = mul_q;
 				end
-				25 : begin
+				23 : begin
 					if (to_int_q[7:0] < zb_rdata) begin
 						next_state = RASTER;
 						zb_wdata = to_int_q[7:0];

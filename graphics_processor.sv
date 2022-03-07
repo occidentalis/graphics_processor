@@ -20,6 +20,28 @@ module graphics_processor (
         VGA_VS <= _VGA_VS;
     end
 
+    enum {
+        DONE,
+        START,
+        READ_VERTICES,
+        READ_TETRA_VERTICES,
+        CALC_ROT,
+        APPLY_ROT1,
+        APPLY_ROT2,
+        APPLY_ROT3,
+        SHADER_CALC,
+        APPLY_TRAN1,
+        APPLY_TRAN2,
+        APPLY_TRAN3,
+        TRANSFORM_VERTEX1,
+        TRANSFORM_VERTEX2,
+        TRANSFORM_VERTEX3,
+        WAIT_FOR_VSYNC,
+        CLEAR_SCREEN,
+        RASTER_TRIANGLE,
+        RASTER_TRIANGLE2
+    } state, next_state;
+
     logic fb_we;
     logic [3:0] fb_data, fb_q;
     logic [16:0] fb_rdaddress, fb_wraddress;
@@ -137,28 +159,6 @@ module graphics_processor (
     logic [31:0] cos_res_in, sin_res_in, cos_res, sin_res;
     reg_32 cos_res_reg(.clk(clk), .write_en(cos_res_we), .reset(reset), .data_in(cos_res_in), .data_out(cos_res));
     reg_32 sin_res_reg(.clk(clk), .write_en(sin_res_we), .reset(reset), .data_in(sin_res_in), .data_out(sin_res));
-
-    enum {
-        DONE,
-        START,
-        READ_VERTICES,
-        READ_TETRA_VERTICES,
-        CALC_ROT,
-        APPLY_ROT1,
-        APPLY_ROT2,
-        APPLY_ROT3,
-        SHADER_CALC,
-        APPLY_TRAN1,
-        APPLY_TRAN2,
-        APPLY_TRAN3,
-        TRANSFORM_VERTEX1,
-        TRANSFORM_VERTEX2,
-        TRANSFORM_VERTEX3,
-        WAIT_FOR_VSYNC,
-        CLEAR_SCREEN,
-        RASTER_TRIANGLE,
-        RASTER_TRIANGLE2
-    } state, next_state;
 
     logic [31:0] pyramid[4][3][3];
     assign pyramid[0] = '{ '{32'hc1700000, 32'h00000000, 32'h4129b4a2},   // -15,   0, -29.39
